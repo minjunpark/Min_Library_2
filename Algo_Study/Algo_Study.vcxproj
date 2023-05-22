@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{45c115f4-84d0-4c9a-b648-527bf0e46ae7}</ProjectGuid>
-    <RootNamespace>MinLibrary</RootNamespace>
+    <ProjectGuid>{6a59e0f9-f102-4a79-bf81-3dafb0f50238}</ProjectGuid>
+    <RootNamespace>AlgoStudy</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -119,6 +119,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <Optimization>Disabled</Optimization>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,18 +129,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="RingBuf.cpp" />
-    <ClCompile Include="Ringbuffer.cpp" />
+    <ClCompile Include="Algo_Study.cpp" />
+    <ClCompile Include="BFS.cpp" />
+    <ClCompile Include="Bubble.cpp" />
+    <ClCompile Include="DFS.cpp" />
+    <ClCompile Include="Heap.cpp" />
+    <ClCompile Include="Insert.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TRingBuffer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CList.h" />
-    <ClInclude Include="CRingbuffer.h" />
-    <ClInclude Include="MRingBuffer.h" />
-    <ClInclude Include="RingBuf.h" />
-    <ClInclude Include="RingBuffer.h" />
-    <ClInclude Include="TRingBuffer.h" />
+    <ClCompile Include="Merge.cpp" />
+    <ClCompile Include="queue.cpp" />
+    <ClCompile Include="Quick.cpp" />
+    <ClCompile Include="Selection.cpp" />
+    <ClCompile Include="stack.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

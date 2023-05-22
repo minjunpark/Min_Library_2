@@ -1,33 +1,157 @@
-ï»¿// Min_Library.cpp : ì´ íŒŒì¼ì—ëŠ” 'main' í•¨ìˆ˜ê°€ í¬í•¨ë©ë‹ˆë‹¤. ê±°ê¸°ì„œ í”„ë¡œê·¸ë¨ ì‹¤í–‰ì´ ì‹œì‘ë˜ê³  ì¢…ë£Œë©ë‹ˆë‹¤.
-//
-
+#include "RingBuffer.h"
 #include <iostream>
-#include <cstdio>
-#include "CRingbuffer.h"
-char buf[82];
-int main()
-{
-    strcpy_s(buf,sizeof(buf),"1234567890 abcdefghijklmnopqrstuvwxyz 1234567890 abcdefghijklmnopqrstuvwxyz 12345");
 
-    CRingBuffer ring = CRingBuffer(200);
-    ring._print();
-    //printf("GetBufferSize() %d\n", ring.GetBufferSize());
-    //printf("ring.DirectEnqueueSize() %d\n", ring.DirectEnqueueSize());
-    ring.Enqueue(buf,sizeof(buf));
-    //printf("ring.DirectEnqueueSize() %d\n", ring.DirectEnqueueSize());
-    //printf("GetUseSize() %d\n", ring.GetUseSize());
-    //printf("GetFreeSize() %d\n", ring.GetFreeSize());
-   // ring.Enqueue(buf, sizeof(buf));
-    ring._print();
-    ring._print();
-    //
-    memset(buf,0, sizeof(buf));
-    printf("%s",buf);
-    //printf("ring.DirectDequeueSize() %d\n", ring.DirectDequeueSize());
-    ring.Dequeue(buf, sizeof(buf));
-    printf("ring.DirectDequeueSize() %d\n", ring.DirectDequeueSize());
-    printf("%s", buf);
-    ring._print();
-    //ring._print();
+RingBuffer::RingBuffer() :_RingBufferSize(10000)
+{
+	_Start = (char*)malloc(_RingBufferSize);
+	_End = _Start + _RingBufferSize;
+	_Front = _Rear = _Start;
 }
 
+RingBuffer::RingBuffer(int bufferSize) :_RingBufferSize(bufferSize)
+{
+	_Start = (char*)malloc(bufferSize);
+	_End = _Start + _RingBufferSize;
+	_Front = _Rear = _Start;
+}
+
+int RingBuffer::GetBufferSize()
+{
+	return _End - _Start - 1;
+}
+
+int RingBuffer::GetUseSize()
+{
+	if (_Rear >= _Front)
+		return _Rear - _Front;
+	return (_Rear - _Start) + (_End - _Front - 1);
+}
+
+int RingBuffer::GetFreeSize()
+{
+	if (_Rear >= _Front)
+		return (_End - _Rear) + (_Front - _Start - 1);
+	return _Front - _Rear - 1;
+}
+
+int RingBuffer::DirectEnqeueSize()
+{
+	if (_Rear >= _Front)
+		return _End - _Rear - 1;
+	return _Front - _Rear - 1;
+}
+
+
+int RingBuffer::DirectDeqeueSize()
+{
+	if (_Rear >= _Front)
+		return _Rear - _Front;
+	return _End - _Front - 1;
+}
+
+
+int RingBuffer::Enqueue(const char* buffer, int size)
+{
+	if (GetFreeSize() < size)
+	{
+		return 0;
+	}
+	if (DirectEnqeueSize() >= size)
+	{
+		memcpy_s(_Rear, size, buffer, size);
+		MoveRear(size);
+		return size;
+	}
+	const char* temp = buffer;
+
+	int directEnqueueSize = DirectEnqeueSize();
+	memcpy_s(_Rear, directEnqueueSize, temp, directEnqueueSize);
+	temp += directEnqueueSize;
+	MoveRear(directEnqueueSize);
+
+	int remainSize = size - directEnqueueSize;
+	memcpy_s(_Rear, remainSize, temp, remainSize);
+	MoveRear(remainSize);
+	return size;
+}
+
+int RingBuffer::Dequeue(char* pDest, int size)
+{
+	if (GetUseSize() < size)return 0;
+	if (DirectDeqeueSize() >= size)
+	{
+		memcpy_s(pDest, size, _Front, size);
+		MoveFront(size);
+		return size;
+	}
+	char* pDestTemp = pDest;
+	int directDequeueSize = DirectDeqeueSize();
+
+	memcpy_s(pDestTemp, directDequeueSize, _Front, directDequeueSize);
+	MoveFront(directDequeueSize);
+	int remainSize = size - directDequeueSize;
+	pDestTemp += directDequeueSize;
+	memcpy_s(pDestTemp, remainSize, _Front, remainSize);
+	MoveFront(remainSize);
+
+	return size;
+}
+
+int RingBuffer::Peek(char* pDest, int size)
+{
+	if (GetFreeSize() < size)return 0;
+	if (DirectDeqeueSize() >= size)
+	{
+		memcpy_s(pDest, size, _Front, size);
+		return size;
+	}
+	char* pFrontTemp = _Front;
+	char* pDestTemp = pDest;
+	int directDequeueSize = DirectDeqeueSize();
+
+	memcpy_s(pDestTemp, directDequeueSize, _Front, directDequeueSize);
+	MoveFront(directDequeueSize);
+	int remainSize = size - directDequeueSize;
+	pDestTemp += directDequeueSize;
+	memcpy_s(pDestTemp, remainSize, _Front, remainSize);
+	_Front = pFrontTemp;
+
+	return size;
+}
+
+void RingBuffer::MoveRear(int size)
+{
+	_Rear += size;
+	if (_Rear >= _End - 1)
+	{
+		int overFlow = _Rear - _End;
+		_Rear = _Start + overFlow;
+	}
+}
+
+void RingBuffer::MoveFront(int size)
+{
+	_Front += size;//ÇÁ·ĞÆ®¸¦ ¸¦ »çÀÌÁî¸¸Å­ ÀÌµ¿½ÃÅ°°í
+	if (_Front >= _End - 1)//¸¸¾à ³¡ÁöÁ¡À» ³Ñ¾î¼±´Ù¸é
+	{
+		int overFlow = _Front - _End;//³Ñ¾î¼­´Â°ª¸¸Å­ °è»êÈÄ
+		_Front = _Start + overFlow;//½ÃÀÛºÎÅÍ ÇÁ·ĞÆ®¿¡ ´õÇÏ°í ÀÌµ¿½ÃÅ²´Ù.
+	}
+}
+
+
+void RingBuffer::ClearBuffeR()
+{
+	//Rear°ú Start¸¦ °°Àº À§Ä¡·Î ÀÌµ¿½ÃÅ²´Ù.
+	_Rear = _Start;
+	_Front = _Start;
+};
+
+char* RingBuffer::GetReadPtr()
+{
+	return _Front;//ÀĞ±âÆ÷ÀÎÅÍ °¡Á®¿À±â
+};
+char* RingBuffer::GetWritePtr()
+{
+	return _Rear;//¾²±âÆ÷ÀÎÅÍ °¡Á®¿À±â
+};

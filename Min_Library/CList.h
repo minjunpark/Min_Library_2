@@ -216,10 +216,10 @@ public:
 
 	void remove(T Data)
 	{
-		CList<int>::iterator iter;
+		CList<T>::iterator iter;
 		for (iter = begin(); iter != end();)
 		{
-			if (*iter == Data) //값이 일치한다면?
+			if (*iter == Data) //값이 일치한다면 삭제시킨다
 			{
 				iter = erase(iter);
 			}

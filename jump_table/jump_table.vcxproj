@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{45c115f4-84d0-4c9a-b648-527bf0e46ae7}</ProjectGuid>
-    <RootNamespace>MinLibrary</RootNamespace>
+    <ProjectGuid>{c3ef7838-3a05-4e1b-bec5-bffdcde0444e}</ProjectGuid>
+    <RootNamespace>jumptable</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -128,18 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="RingBuf.cpp" />
-    <ClCompile Include="Ringbuffer.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="TRingBuffer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CList.h" />
-    <ClInclude Include="CRingbuffer.h" />
-    <ClInclude Include="MRingBuffer.h" />
-    <ClInclude Include="RingBuf.h" />
-    <ClInclude Include="RingBuffer.h" />
-    <ClInclude Include="TRingBuffer.h" />
+    <ClCompile Include="jump_table.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
