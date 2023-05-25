@@ -122,7 +122,7 @@ public:
 		else//사용 할 수 있는 메모리 오브젝트가 없다면 만들어서 리턴해준다.
 		{
 			Node* NewNode = (Node*)malloc(sizeof(Node));//생성자를 호출하지 않기위해 malloc으로 세팅
-			
+
 			DATA* Data = new (&(NewNode->data)) DATA;//생성자를 호출하면서 데이터 세팅
 
 			NewNode->OVER_GUARD = m_buffer_pointer;

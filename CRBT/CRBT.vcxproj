@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{6d297e02-15bf-494b-9529-301226bf5a58}</ProjectGuid>
-    <RootNamespace>datastructure</RootNamespace>
+    <ProjectGuid>{d5283675-ae57-4312-a4aa-7deecfbbc973}</ProjectGuid>
+    <RootNamespace>CRBT</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -128,23 +128,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="1.이해.cpp" />
-    <ClCompile Include="2.재귀.cpp" />
-    <ClCompile Include="3.연결리스트.cpp" />
-    <ClCompile Include="8.트리.cpp" />
-    <ClCompile Include="ALGraph.c" />
-    <ClCompile Include="ALGraphMain.c" />
-    <ClCompile Include="ArrayList.c" />
-    <ClCompile Include="BinaryTree2.c" />
-    <ClCompile Include="BinaryTreeMain2.c" />
-    <ClCompile Include="data_structure.cpp" />
-    <ClCompile Include="DLinkedList.c" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ALGraph.h" />
-    <ClInclude Include="ArrayList.h" />
-    <ClInclude Include="BinaryTree2.h" />
-    <ClInclude Include="DLinkedList.h" />
+    <ClInclude Include="CRBT.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

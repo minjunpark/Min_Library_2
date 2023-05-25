@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{6d297e02-15bf-494b-9529-301226bf5a58}</ProjectGuid>
-    <RootNamespace>datastructure</RootNamespace>
+    <ProjectGuid>{191eadf4-6d89-4913-b22d-c7120fac4bc8}</ProjectGuid>
+    <RootNamespace>DFS</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -118,7 +118,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,22 +127,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="1.이해.cpp" />
-    <ClCompile Include="2.재귀.cpp" />
-    <ClCompile Include="3.연결리스트.cpp" />
-    <ClCompile Include="8.트리.cpp" />
-    <ClCompile Include="ALGraph.c" />
-    <ClCompile Include="ALGraphMain.c" />
-    <ClCompile Include="ArrayList.c" />
-    <ClCompile Include="BinaryTree2.c" />
-    <ClCompile Include="BinaryTreeMain2.c" />
-    <ClCompile Include="data_structure.cpp" />
+    <ClCompile Include="ALGraphDFS.c" />
+    <ClCompile Include="ArrayBaseStack.c" />
+    <ClCompile Include="DFSMain.c" />
     <ClCompile Include="DLinkedList.c" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ALGraph.h" />
-    <ClInclude Include="ArrayList.h" />
-    <ClInclude Include="BinaryTree2.h" />
+    <ClInclude Include="ALGraphDFS.h" />
+    <ClInclude Include="ArrayBaseStack.h" />
     <ClInclude Include="DLinkedList.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

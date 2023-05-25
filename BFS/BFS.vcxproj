@@ -18,11 +18,22 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ALGraphBFS.h" />
+    <ClInclude Include="CircularQueue.h" />
+    <ClInclude Include="DLinkedList.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ALGraphBFS.c" />
+    <ClCompile Include="BFSMain.c" />
+    <ClCompile Include="CircularQueue.c" />
+    <ClCompile Include="DLinkedList.c" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{6d297e02-15bf-494b-9529-301226bf5a58}</ProjectGuid>
-    <RootNamespace>datastructure</RootNamespace>
+    <ProjectGuid>{b7293e16-d623-4d23-b684-fe573c0b74cd}</ProjectGuid>
+    <RootNamespace>BFS</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -118,7 +129,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,25 +137,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="1.이해.cpp" />
-    <ClCompile Include="2.재귀.cpp" />
-    <ClCompile Include="3.연결리스트.cpp" />
-    <ClCompile Include="8.트리.cpp" />
-    <ClCompile Include="ALGraph.c" />
-    <ClCompile Include="ALGraphMain.c" />
-    <ClCompile Include="ArrayList.c" />
-    <ClCompile Include="BinaryTree2.c" />
-    <ClCompile Include="BinaryTreeMain2.c" />
-    <ClCompile Include="data_structure.cpp" />
-    <ClCompile Include="DLinkedList.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ALGraph.h" />
-    <ClInclude Include="ArrayList.h" />
-    <ClInclude Include="BinaryTree2.h" />
-    <ClInclude Include="DLinkedList.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
