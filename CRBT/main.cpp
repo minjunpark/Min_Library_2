@@ -129,18 +129,18 @@ int main()
         case 7:
             printf("%d", tree.Depth_Count(tree.GetRootNode()));
             break;
-        //case 8:
-        //    printf("회전할 입력할 데이터를 입력하세요");
-        //    scanf_s("%d", &tmpinput);
-        //    printf("\n");
-        //    tree.Right_Rotation_Test(tmpinput);
-        //    break;
-        //case 9:
-        //    printf("회전할 입력할 데이터를 입력하세요");
-        //    scanf_s("%d", &tmpinput);
-        //    printf("\n");
-        //    tree.Left_Rotation_Test(tmpinput);
-        //    break;
+        case 8:
+            printf("회전할 입력할 데이터를 입력하세요");
+            scanf_s("%d", &tmpinput);
+            printf("\n");
+            tree.Right_Rotation_Test(tmpinput);
+            break;
+        case 9:
+            printf("회전할 입력할 데이터를 입력하세요");
+            scanf_s("%d", &tmpinput);
+            printf("\n");
+            tree.Left_Rotation_Test(tmpinput);
+            break;
         }
     }
     return 0;

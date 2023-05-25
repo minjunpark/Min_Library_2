@@ -131,7 +131,6 @@ public:
 		///////////////////////////////////////////////////////////
 
 		RedBlack_Insert_Refresh(insertNode);
-
 	}
 
 	void RedBlack_Insert_Refresh(Node* pNode)
@@ -198,16 +197,16 @@ public:
 			}
 			else//삼촌이 레드트리일때
 			{
-				if (_GNode->pColor == e_BLACK)//블랙이라면 레드로
+				if (_GNode->pColor == e_BLACK)//할아버지가 블랙이라면 레드로
 					Color_swap(_GNode);
 
-				Color_swap(_GNode->pLeft);//레드를 블랙으로
-				Color_swap(_GNode->pRight);//레드를 블랙으로
+				Color_swap(_GNode->pLeft);//할아버지의 왼쪽 자식 레드를 블랙으로->여기오는 조건자체가 시작부터 부모는 레드고
+				Color_swap(_GNode->pRight);//할아버지의 왼쪽 자식 레드를 블랙으로->삼촌이 레드트리기 이기때문에
 
-				if (_GNode == pRoot)
+				if (_GNode == pRoot)//만약 할아버지가 루트노드라면 블랙노드로 바꿔준다.
 					_GNode->pColor = e_BLACK;
 
-				if(_GNode->pColor==e_RED)//만약 바꾼 할아버지가 빨간색이라면
+				if(_GNode->pColor==e_RED)//만약 이뒤에 할아버지가 레드로 바뀐상태라면
 					RedBlack_Insert_Refresh(_GNode);//다시 할아버지부터 검증을 들어간다.
 			}
 		}
@@ -219,6 +218,9 @@ public:
 			return;
 
 		Node* lNode = sNode->pLeft;
+		if (lNode == nil || lNode == nullptr)//회전하려는데 왼쪽노드 데이터가 없으면 회전불가
+			return;
+
 		if (lNode->pRight != nil)
 		{
 			sNode->pLeft = lNode->pRight;
@@ -240,12 +242,101 @@ public:
 		}
 	}
 
+	void Right_Rotation_Test(int data)
+	{
+		Node* sNode = pRoot;
+		while (sNode != nil)//넣어야하는 위치를 탐색한다.
+		{
+			if (sNode->Data == data)//중복데이터를 찾았다면 그 노드를 회전
+				break;
+
+			if (sNode->Data > data) //현재 노드보다 데이터가 작다면 왼쪽으로 가야한다.
+			{
+				sNode = sNode->pLeft;
+			}
+			else//현재 노드보다 데이터가 크다면 오른쪽으로 가야한다.
+			{
+				sNode = sNode->pRight;
+			}
+		}
+
+		Node* lNode = sNode->pLeft;
+		if (lNode == nil || lNode == nullptr)
+			return;
+
+		if (lNode->pRight != nil)
+		{
+			sNode->pLeft = lNode->pRight;
+			sNode->pLeft->pParent = sNode;
+		}
+		else
+		{
+			sNode->pLeft = nil;
+		}
+		lNode->pRight = sNode;
+
+		lNode->pParent = sNode->pParent;
+		sNode->pParent = lNode;
+		lNode->pParent->pRight = lNode;
+
+		if (lNode->pParent == nil)//만약 이동하려는 노드가 Root노드라면
+		{
+			pRoot = lNode;//LNode를 루트로 바꿔준다.
+		}
+	}
+
 	void  Left_Rotation(Node* sNode)
 	{
 		if (sNode == nil || sNode->pRight == nil)
 			return;
 
 		Node* lNode = sNode->pRight;
+		if (lNode == nil || lNode == nullptr)//회전하려는데 오른쪽 노드 데이터가 없다면 회전불가
+			return;
+
+		if (lNode->pLeft != nil)
+		{
+			sNode->pRight = lNode->pLeft;
+			sNode->pRight->pParent = sNode;
+		}
+		else
+		{
+			sNode->pRight = nil;
+		}
+		lNode->pLeft = sNode;
+
+		lNode->pParent = sNode->pParent;
+		sNode->pParent = lNode;
+		lNode->pParent->pLeft = lNode;
+
+		if (lNode->pParent == nil)//만약 이동하려는 노드가 Root노드라면
+			pRoot = lNode;//LNode를 루트로 바꿔준다.
+	}
+
+	void  Left_Rotation_Test(int data)
+	{
+		//if (sNode == nil || sNode->pRight == nil)
+		//return;
+		Node* sNode = pRoot;
+		while (sNode != nil)//넣어야하는 위치를 탐색한다.
+		{
+			if (sNode->Data == data)//중복데이터를 찾았다면 그 노드를 회전
+				break;
+
+			if (sNode->Data > data) //현재 노드보다 데이터가 작다면 왼쪽으로 가야한다.
+			{
+				sNode = sNode->pLeft;
+			}
+			else//현재 노드보다 데이터가 크다면 오른쪽으로 가야한다.
+			{
+				sNode = sNode->pRight;
+			}
+		}
+
+		Node* lNode = sNode->pRight;
+		if (lNode == nil || lNode == nullptr)
+			return;
+
 		if (lNode->pLeft != nil)
 		{
 			sNode->pRight = lNode->pLeft;
@@ -276,69 +367,6 @@ public:
 			pNode->pColor = e_BLACK;
 
 		return true;
-	}
-
-	void Tree_black_Insert(int data)
-	{
-		if (data <= 0) //0이하의 데이터는 처리하지 않겠다.
-			return;
-
-		if (pRoot == nullptr)//루트 노드가 없다면
-		{
-			pRoot = new Node;
-			if (pRoot == nullptr)
-				return;
-			pRoot->pColor = e_BLACK;//루트노드는 반드시 검정
-			pRoot->Data = data;
-			pRoot->pParent = nullptr;//루트노드 부모는 없다.
-			pRoot->pLeft = nullptr;
-			pRoot->pRight = nullptr;
-			//루트 노드 생성하고 함수를 종료한다.
-			return;
-		}
-
-		Node* pNode = nullptr;
-		Node* cNode = pRoot;//루트 노드부터 시작
-		Node* insertNode = nullptr;
-
-		while (cNode != nullptr)//넣어야하는 위치를 탐색한다.
-		{
-			if (cNode->Data == data)//중복데이터는 절대없도록한다.
-				return;
-
-			pNode = cNode;//부모 노드를 저장한다.
-
-			if (cNode->Data > data) //현재 노드보다 데이터가 작다면 왼쪽으로 가야한다.
-			{
-				cNode = cNode->pLeft;
-			}
-			else//현재 노드보다 데이터가 크다면 오른쪽으로 가야한다.
-			{
-				cNode = cNode->pRight;
-			}
-		}
-
-		//빠져나왔다는건 리프노드에 도달했다는 뜻
-		//데이터 노드를 만들고
-		insertNode = new Node;
-		insertNode->Data = data;
-		insertNode->pColor = e_BLACK;//맨처음 입력시 반드시 빨간색으로 세팅한다.
-		insertNode->pParent = pNode;//부모를 넣는다.
-		insertNode->pLeft = nullptr;
-		insertNode->pRight = nullptr;
-
-		if (pNode->Data > data)//부모 노드보다 작다면 왼쪽으로
-			pNode->pLeft = insertNode;
-		else//부모 노드보다 크다면 오른쪽으로
-			pNode->pRight = insertNode;
-
-		///////////////////////////////////////////////////////////
-		///여기부터 레드블랙트리 정리//////////////////////////////
-		//////////////////////////////////////////////////////////
-
-		if (insertNode == pRoot)
-			pRoot->pColor = e_BLACK;
-
 	}
 
 	int Tree_Count(Node* root)
