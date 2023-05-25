@@ -19,15 +19,27 @@ int main()
     //tree.Tree_Insert(70);
     //tree.Tree_Insert(110);
     CREDBLACKTREE tree;
-
-    tree.RedBlack_Insert(20);
-    tree.RedBlack_Insert(10);
-    tree.RedBlack_Insert(50);
-    tree.RedBlack_Insert(30);
-    tree.RedBlack_Insert(80);
-    tree.RedBlack_Insert(40);
-    tree.RedBlack_Insert(35);
-    tree.RedBlack_Insert(25);
+    
+    //tree.RedBlack_Insert(71);
+    //tree.RedBlack_Insert(68);
+    //tree.RedBlack_Insert(59);
+    //tree.RedBlack_Insert(77);
+    //tree.RedBlack_Insert(96);
+    //for (int i=0;i<11;i++) 
+    //{
+    //    int num = rand()%100;
+    //    printf("%d ",num);
+    //    tree.RedBlack_Insert(num);
+    //}
+    //printf("\n");
+    //tree.RedBlack_Insert(20);
+    //tree.RedBlack_Insert(10);
+    //tree.RedBlack_Insert(50);
+    //tree.RedBlack_Insert(30);
+    //tree.RedBlack_Insert(80);
+    //tree.RedBlack_Insert(40);
+    //tree.RedBlack_Insert(35);
+    //tree.RedBlack_Insert(25);
     
 
     //tree.Tree_Insert(5);

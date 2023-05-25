@@ -123,9 +123,7 @@ public:
 			pNode->pLeft = insertNode;
 		else//부모 노드보다 크다면 오른쪽으로
 			pNode->pRight = insertNode;
-
-
-
+		
 		///////////////////////////////////////////////////////////
 		///여기부터 레드블랙트리 정리//////////////////////////////
 		///////////////////////////////////////////////////////////
@@ -135,16 +133,10 @@ public:
 
 	void RedBlack_Insert_Refresh(Node* pNode)
 	{
-
-		if (pRoot->pColor == e_RED)//루트노드가 레드라면 블랙으로 바꿔준다.
-			pRoot->pColor = e_BLACK;
-
 		Node* _MNode = pNode;
 		Node* _PNode = _MNode->pParent;
 		Node* _GNode = _PNode->pParent;
 		Node* _UNode;
-
-
 
 		if (_GNode->pLeft == _PNode)
 			_UNode = _GNode->pRight;
@@ -210,6 +202,9 @@ public:
 					RedBlack_Insert_Refresh(_GNode);//다시 할아버지부터 검증을 들어간다.
 			}
 		}
+
+		if (pRoot->pColor == e_RED)//루트노드가 레드라면 블랙으로 바꿔준다.
+			pRoot->pColor = e_BLACK;
 	}
 
 	void Right_Rotation(Node* sNode)
@@ -236,6 +231,11 @@ public:
 		sNode->pParent = lNode;
 		lNode->pParent->pRight = lNode;
 		
+		//if(lNode->pParent->pRight!=nil)
+		//	lNode->pParent->pRight = lNode;
+		//else
+		//	lNode->pParent->pLeft = lNode;
+
 		if (lNode->pParent == nil)//만약 이동하려는 노드가 Root노드라면
 		{
 			pRoot = lNode;//LNode를 루트로 바꿔준다.
