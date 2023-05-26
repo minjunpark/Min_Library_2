@@ -209,12 +209,12 @@ public:
 
 	void Right_Rotation(Node* sNode)
 	{
-		if (sNode == nil || sNode->pLeft == nil)
-			return;
+		//if (sNode == nil || sNode->pLeft == nil)
+		//	return;
 
 		Node* lNode = sNode->pLeft;
-		if (lNode == nil || lNode == nullptr)//회전하려는데 왼쪽노드 데이터가 없으면 회전불가
-			return;
+		//if (lNode == nil || lNode == nullptr)//회전하려는데 왼쪽노드 데이터가 없으면 회전불가
+		//	return;
 
 		if (lNode->pRight != nil)
 		{
@@ -292,13 +292,13 @@ public:
 
 	void  Left_Rotation(Node* sNode)
 	{
-		if (sNode == nil || sNode->pRight == nil)
-			return;
+		//if (sNode == nil || sNode->pRight == nil)
+		//	return;
 
 		Node* lNode = sNode->pRight;
 
-		if (lNode == nil || lNode == nullptr)//회전하려는데 오른쪽 노드 데이터가 없다면 회전불가
-			return;
+		//if (lNode == nil || lNode == nullptr)//회전하려는데 오른쪽 노드 데이터가 없다면 회전불가
+		//	return;
 
 		if (lNode->pLeft != nil)
 		{
