@@ -15,7 +15,7 @@ public:
 	struct Node
 	{
 		int Data;
-		char pColor= e_RED;//false 빨강 true 검정
+		char pColor = e_RED;//false 빨강 true 검정
 		Node* pParent = nullptr;
 		Node* pLeft = nullptr;
 		Node* pRight = nullptr;
@@ -92,7 +92,7 @@ public:
 		Node* pNode = nullptr;
 		Node* cNode = pRoot;//루트 노드부터 시작
 		Node* insertNode = nullptr;
-		
+
 		while (cNode != nil)//넣어야하는 위치를 탐색한다.
 		{
 			if (cNode->Data == data)//중복데이터는 절대없도록한다.
@@ -123,7 +123,7 @@ public:
 			pNode->pLeft = insertNode;
 		else//부모 노드보다 크다면 오른쪽으로
 			pNode->pRight = insertNode;
-		
+
 		///////////////////////////////////////////////////////////
 		///여기부터 레드블랙트리 정리//////////////////////////////
 		///////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ public:
 			_UNode = _GNode->pRight;
 		else
 			_UNode = _GNode->pLeft;
-		
+
 		if (_PNode->pColor == e_RED)//현재 나의 부모가 RED 노드라면?
 		{
 			if (_UNode->pColor == e_BLACK)//삼촌이 검정트리일떄
@@ -198,7 +198,7 @@ public:
 				if (_GNode == pRoot)//만약 할아버지가 루트노드라면 블랙노드로 바꿔준다.
 					_GNode->pColor = e_BLACK;
 
-				if(_GNode->pColor==e_RED)//만약 이뒤에 할아버지가 레드로 바뀐상태라면
+				if (_GNode->pColor == e_RED)//만약 이뒤에 할아버지가 레드로 바뀐상태라면
 					RedBlack_Insert_Refresh(_GNode);//다시 할아버지부터 검증을 들어간다.
 			}
 		}
@@ -228,13 +228,13 @@ public:
 		lNode->pRight = sNode;
 
 		lNode->pParent = sNode->pParent;
+
+		if (lNode->pParent->pLeft == sNode)
+			lNode->pParent->pLeft = lNode;
+		else
+			lNode->pParent->pRight = lNode;
+
 		sNode->pParent = lNode;
-		lNode->pParent->pRight = lNode;
-		
-		//if(lNode->pParent->pRight!=nil)
-		//	lNode->pParent->pRight = lNode;
-		//else
-		//	lNode->pParent->pLeft = lNode;
 
 		if (lNode->pParent == nil)//만약 이동하려는 노드가 Root노드라면
 		{
@@ -291,6 +291,7 @@ public:
 			return;
 
 		Node* lNode = sNode->pRight;
+
 		if (lNode == nil || lNode == nullptr)//회전하려는데 오른쪽 노드 데이터가 없다면 회전불가
 			return;
 
@@ -306,8 +307,13 @@ public:
 		lNode->pLeft = sNode;
 
 		lNode->pParent = sNode->pParent;
+
+		if (lNode->pParent->pLeft == sNode)
+			lNode->pParent->pLeft = lNode;
+		else
+			lNode->pParent->pRight = lNode;
+
 		sNode->pParent = lNode;
-		lNode->pParent->pLeft = lNode;
 
 		if (lNode->pParent == nil)//만약 이동하려는 노드가 Root노드라면
 			pRoot = lNode;//LNode를 루트로 바꿔준다.
@@ -382,7 +388,7 @@ public:
 	int Depth_Count(Node* root)
 	{
 		int height = 0;
-		if (root != nullptr)
+		if (root != nullptr && root != nil)
 		{
 			int left = Depth_Count(root->pLeft);//왼쪽노드 다확인하고 리턴
 			int right = Depth_Count(root->pRight);//오른쪽노드 다 확인하고 리턴
@@ -683,14 +689,14 @@ public:
 		{
 			Node* _qNode = q.front();
 			q.pop();
-			
+
 			if (_qNode->pLeft != nullptr && _qNode != nil)
 				q.push(_qNode->pLeft);
 
 			if (_qNode->pRight != nullptr && _qNode != nil)
 				q.push(_qNode->pRight);
 
-			if(_qNode != nil)
+			if (_qNode != nil)
 				printf("%d ", _qNode->Data);
 		}
 		printf("\n");
