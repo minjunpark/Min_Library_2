@@ -160,7 +160,7 @@ public:
 				else if (_GNode->pRight == _PNode//부모가 할아버지의 오른쪽 자식
 					&& _PNode->pRight == _MNode)//내가 부모의 오른쪽자식
 				{
-					//1.부모와 할아버지의 뒤집어서 바꾼 후
+					//1.부모와 할아버지의 색을 뒤집어서 바꾼 후
 					Color_swap(_PNode);
 					Color_swap(_GNode);
 					//2.할아버지 기준으로 오른쪽으로 회전
@@ -261,7 +261,7 @@ public:
 		}
 
 		Node* lNode = sNode->pLeft;
-		if (lNode == nil || lNode == nullptr)
+		if (lNode == nil || lNode == nullptr)//회전하려는데 왼쪽노드 데이터가 없으면 회전불가
 			return;
 
 		if (lNode->pRight != nil)
@@ -276,8 +276,13 @@ public:
 		lNode->pRight = sNode;
 
 		lNode->pParent = sNode->pParent;
+
+		if (lNode->pParent->pLeft == sNode)
+			lNode->pParent->pLeft = lNode;
+		else
+			lNode->pParent->pRight = lNode;
+
 		sNode->pParent = lNode;
-		lNode->pParent->pRight = lNode;
 
 		if (lNode->pParent == nil)//만약 이동하려는 노드가 Root노드라면
 		{
@@ -340,7 +345,8 @@ public:
 		}
 
 		Node* lNode = sNode->pRight;
-		if (lNode == nil || lNode == nullptr)
+
+		if (lNode == nil || lNode == nullptr)//회전하려는데 오른쪽 노드 데이터가 없다면 회전불가
 			return;
 
 		if (lNode->pLeft != nil)
@@ -355,8 +361,13 @@ public:
 		lNode->pLeft = sNode;
 
 		lNode->pParent = sNode->pParent;
+
+		if (lNode->pParent->pLeft == sNode)
+			lNode->pParent->pLeft = lNode;
+		else
+			lNode->pParent->pRight = lNode;
+
 		sNode->pParent = lNode;
-		lNode->pParent->pLeft = lNode;
 
 		if (lNode->pParent == nil)//만약 이동하려는 노드가 Root노드라면
 			pRoot = lNode;//LNode를 루트로 바꿔준다.
@@ -401,7 +412,6 @@ public:
 				height += right;
 		}
 		return height;
-
 	}
 
 	//삭제
@@ -413,7 +423,7 @@ public:
 		bool delete_color;
 
 		//우선 삭제해야하는 노드의 위치를 탐색한다.
-		while (cNode != nullptr)
+		while (cNode != nil)
 		{
 			if (cNode->Data == data)//삭제해야하는 노드에 도달했다면
 				break;//반복문을 탈출한다.
@@ -430,31 +440,32 @@ public:
 			}
 		}
 
-		if (cNode == nullptr)//데이터가 없다는 뜻이므로 삭제하지 않고 무시한다.
+		if (cNode == nil)//데이터가 없다는 뜻이므로 삭제하지 않고 무시한다.
 			return false;
 
 		//현재 checkNode 위치가 삭제해야하는 위치다.
 		//삭제할 노드가(1) 단말 노드인 경우
-		if (cNode->pLeft == nullptr && cNode->pRight == nullptr)//자식이 없는 노드라면
+		if (cNode->pLeft == nil && cNode->pRight == nil)//자식이 없는 노드라면
 		{
-			if (pNode == nullptr)//루트 노드일경우
+			if (pNode == nil)//루트 노드일경우
 				pRoot = nullptr;//루트 노드를 제거한다.->이반복문 탈출시 cNode로 루트 자동 제거됨
+
 			//return true;//마지막 노드니까 삭제하지 않게하겠다.->이건뭐 정책정하기 나름인듯?
 			else if (pNode->pLeft == cNode) //부모노드의 왼쪽노드라면
-				pNode->pLeft = nullptr;//왼쪽노드 초기화
+				pNode->pLeft = nil;//왼쪽노드 초기화
 			else//부모노드의 오른쪽노드라면
-				pNode->pRight = nullptr;//오른쪽노드 초기화
+				pNode->pRight = nil;//오른쪽노드 초기화
 		}
 		//삭제할 노드가(3) 두 개의 서브트리를 가지고 있는 경우
-		else if (cNode->pLeft != nullptr && cNode->pRight != nullptr)
+		else if (cNode->pLeft != nil && cNode->pRight != nil)
 		{
 			Node* nNode = cNode;//원본 위치 저장
-			pNode = nullptr;
+			pNode = nil;
 
 			cNode = cNode->pRight;//오른쪽노드로 한번이동
 
 			//오른쪽 서브트리 중 가장 작은 노드를 찾는다.
-			while (cNode->pLeft != nullptr)
+			while (cNode->pLeft != nil)
 			{
 				pNode = cNode;//삭제해야하는 노드의 부모노드를 기록한다.
 				cNode = cNode->pLeft;//노드 왼쪽으로 이동
@@ -462,16 +473,16 @@ public:
 
 			nNode->Data = cNode->Data;//삭제한 원본노드
 
-			if (pNode != nullptr)//루트노드가 아닐경우
+			if (pNode != nil)//루트노드가 아닐경우
 				pNode->pLeft = cNode->pRight;//부모노드가 루트가되어 삭제되야 하는값을 자식으로 받아야한다.
 			else//루트노드일경우
 				nNode->pRight = cNode->pRight;//부모가 루트노드라면
 			//바로 오른쪽 노드를 받는것 오른쪽노드의 자식을 받는다 nullptr이라면 그것대로 상관없다.
 		}
 		//삭제할 노드가(2) 하나의 서브트리만 가지고 있는 경우
-		else if (cNode->pLeft != nullptr)//왼쪽 노드만 있을경우
+		else if (cNode->pLeft != nil)//왼쪽 노드만 있을경우
 		{
-			if (pNode == nullptr) //루트 노드일 경우
+			if (pNode == nil) //루트 노드일 경우
 			{//오른쪽에 아무 노드도 없다는거니까 루트를 지우고 그냥 한칸 당긴다.
 				Node* nNode = pRoot->pLeft;//스왑할 노드 위치저장
 				pRoot->Data = cNode->pLeft->Data;//루트 노드 데이터업데이트
@@ -484,9 +495,9 @@ public:
 			else
 				pNode->pRight = cNode->pLeft;//나의 왼쪽자식을 부모노드의 오른쪽으로 이동시킨다.
 		}
-		else if (cNode->pRight != nullptr)//오른쪽노드만 있을경우
+		else if (cNode->pRight != nil)//오른쪽노드만 있을경우
 		{
-			if (pNode == nullptr)//루트 노드일 경우
+			if (pNode == nil)//루트 노드일 경우
 			{//왼쪽에 아무 노드도 없다는거니까 그냥 한칸 당긴다
 				Node* nNode = pRoot->pRight;//원본 위치 저장
 				pRoot->Data = cNode->pRight->Data;
@@ -500,8 +511,11 @@ public:
 				pNode->pRight = cNode->pRight;//나의 오른쪽 자식을 부모노드의 오른쪽으로 이동시킨다.
 		}
 
-
-		cNode->pColor;
+		//삭제된 노드가 레드노드가 아니라면
+		if (cNode->pColor != e_RED)
+		{
+			
+		}
 
 		delete cNode;//노드제거
 

@@ -25,7 +25,7 @@ int main()
 	//tree.RedBlack_Insert(59);
 	//tree.RedBlack_Insert(77);
 	//tree.RedBlack_Insert(96);
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < 15; i++)
 	{
 		int num = rand() % 100;
 		printf("%d ", num);
