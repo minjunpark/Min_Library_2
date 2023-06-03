@@ -30,7 +30,7 @@ private:
 	int m_iCapacity;//메모리풀 전체 개수
 	int m_iUseCount;//사용중인 사이즈
 	bool m_iPlacementNew;// Alloc 시 생성자 / Free 시 파괴자 호출 여부
-	int m_buffer_pointer;//생성될때마다 세팅되는 고유값
+	int m_iBufferPointer;//생성될때마다 세팅되는 고유값
 
 	struct Node
 	{
@@ -42,7 +42,7 @@ private:
 
 public:
 	// 스택 방식으로 반환된 (미사용) 오브젝트 블럭을 관리.
-	Node* _FreeNode;
+	Node* _FreeNode;//얘가 헤드임
 
 	//////////////////////////////////////////////////////////////////////////
 	// 생성자, 파괴자.
@@ -56,7 +56,7 @@ public:
 		m_iCapacity = 0;//전체 총개수
 		m_iUseCount = 0;//사용 중인 개수
 		m_iPlacementNew = bPlacementNew;//Alloc 시 생성자 / Free 시 파괴자 호출 여부
-		m_buffer_pointer = (int)this;//생성될때 세팅되는 this포인터를 고유값으로 한다.
+		m_iBufferPointer = (int)this;//생성될때 세팅되는 this포인터를 고유값으로 한다.
 
 		if (iBlockNum == 0)//0이라면 더 진행할 이유가 없음
 			return;
@@ -68,8 +68,8 @@ public:
 			if (m_iPlacementNew == false) //Alloc시 생성자 파괴자를 호출하지 않을거라면
 				DATA* data = new(&(NewNode->data)) DATA;//생성자를 미리 세팅해둔다.
 
-			NewNode->OVER_GUARD = m_buffer_pointer;//고유 포인터값을 노드에 세팅한다.
-			NewNode->UNDER_GUARD = m_buffer_pointer;//고유 포인터값을 노드에 세팅한다.
+			NewNode->OVER_GUARD = m_iBufferPointer;//고유 포인터값을 노드에 세팅한다.
+			NewNode->UNDER_GUARD = m_iBufferPointer;//고유 포인터값을 노드에 세팅한다.
 
 			NewNode->next = _FreeNode;//스택
 			_FreeNode = NewNode;//쌓기
@@ -92,7 +92,6 @@ public:
 			free(tmpNode);//사용하는 실제 메모리를 free상태로 바꿔준다.
 			_Node = _Node->next;//다음노드로 넘어간다.
 		}
-
 	};
 
 	//////////////////////////////////////////////////////////////////////////
@@ -125,8 +124,8 @@ public:
 
 			DATA* Data = new (&(NewNode->data)) DATA;//생성자를 호출하면서 데이터 세팅
 
-			NewNode->OVER_GUARD = m_buffer_pointer;
-			NewNode->UNDER_GUARD = m_buffer_pointer;
+			NewNode->OVER_GUARD = m_iBufferPointer;
+			NewNode->UNDER_GUARD = m_iBufferPointer;
 
 			NewNode->next = _FreeNode;//스택에 노드 추가
 			_FreeNode = NewNode;
@@ -163,7 +162,7 @@ public:
 			//그후 계산한 값을 들어온 위치에서 타고 올라가 Node 위치를 정확히 세팅한다.
 			Node* ReData = (Node*)((char*)pData - offsetof(Node, data));
 
-			if (ReData->OVER_GUARD != m_buffer_pointer || ReData->UNDER_GUARD != m_buffer_pointer)
+			if (ReData->OVER_GUARD != m_iBufferPointer || ReData->UNDER_GUARD != m_iBufferPointer)
 				return false;//다른 오브젝트의 포인터가 들어왔거나 데이터가 오염됬다는 뜻이다.
 			//로그 남기거나 exception 일으키기가 필요한데 우선 false만 처리한다.
 

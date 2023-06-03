@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d5283675-ae57-4312-a4aa-7deecfbbc973}</ProjectGuid>
-    <RootNamespace>CRBT</RootNamespace>
+    <ProjectGuid>{afd9cd7a-2594-43c8-a790-5994b6c7e278}</ProjectGuid>
+    <RootNamespace>CHeap</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -128,13 +128,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CRBT.cpp" />
+    <ClCompile Include="CHeap.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Profile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CRBT.h" />
-    <ClInclude Include="Profile.h" />
+    <ClInclude Include="CHeap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

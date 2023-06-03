@@ -18,18 +18,33 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Profile.cpp">
+    <ClCompile Include="Dijkstra.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CRBT.cpp">
+    <ClCompile Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\Graph.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\PriorityQueue.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\ShortestPath.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\Test_ShortestPath.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CRBT.h">
+    <ClInclude Include="Dijkstra.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Profile.h">
+    <ClInclude Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\Graph.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\PriorityQueue.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\ShortestPath.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

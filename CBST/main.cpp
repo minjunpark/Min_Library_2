@@ -39,7 +39,7 @@ int main()
     //tree.Tree_Insert(268);
 
     CTREE tree(500);
-    for (int i=0;i<100;i++) 
+    for (int i=0;i<15;i++) 
     {
         int num = rand()%1000;
         tree.Tree_Insert(num);

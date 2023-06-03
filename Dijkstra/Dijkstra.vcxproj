@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d5283675-ae57-4312-a4aa-7deecfbbc973}</ProjectGuid>
-    <RootNamespace>CRBT</RootNamespace>
+    <ProjectGuid>{f1dedceb-87dc-4200-8f09-1d7f3cd2c498}</ProjectGuid>
+    <RootNamespace>Dijkstra</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -118,7 +118,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,13 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CRBT.cpp" />
+    <ClCompile Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\Graph.c" />
+    <ClCompile Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\PriorityQueue.c" />
+    <ClCompile Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\ShortestPath.c" />
+    <ClCompile Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\Test_ShortestPath.c" />
+    <ClCompile Include="Dijkstra.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Profile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CRBT.h" />
-    <ClInclude Include="Profile.h" />
+    <ClInclude Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\Graph.h" />
+    <ClInclude Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\PriorityQueue.h" />
+    <ClInclude Include="..\..\..\Downloads\source_뇌자극알고리즘_7쇄\9장\Dijkstra\ShortestPath.h" />
+    <ClInclude Include="Dijkstra.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

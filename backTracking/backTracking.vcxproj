@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d5283675-ae57-4312-a4aa-7deecfbbc973}</ProjectGuid>
-    <RootNamespace>CRBT</RootNamespace>
+    <ProjectGuid>{3d312655-2b65-484f-b6bd-e689e1b8cfe2}</ProjectGuid>
+    <RootNamespace>backTracking</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -118,7 +118,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,13 +127,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CRBT.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Profile.cpp" />
+    <ClCompile Include="backTracking.cpp" />
+    <ClCompile Include="MazeSolver.c" />
+    <ClCompile Include="Test_MazeSolver.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CRBT.h" />
-    <ClInclude Include="Profile.h" />
+    <ClInclude Include="MazeSolver.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

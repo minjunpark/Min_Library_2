@@ -174,21 +174,23 @@ public:
 			Node* nNode = cNode;//원본 위치 저장
 			pNode = nullptr;
 
-			cNode = cNode->pRight;//오른쪽노드로 한번이동
+			//cNode = cNode->pRight;//오른쪽노드로 한번이동
 
-			//오른쪽 서브트리 중 가장 작은 노드를 찾는다.
-			while (cNode->pLeft != nullptr)
+			cNode = cNode->pLeft;//왼쪽노드로 한번이동
+
+			//왼쪽 서브트리중 가장 큰놈을 찾는다.
+			while (cNode->pRight != nullptr)
 			{
 				pNode = cNode;//삭제해야하는 노드의 부모노드를 기록한다.
-				cNode = cNode->pLeft;//노드 왼쪽으로 이동
+				cNode = cNode->pRight;//노드 왼쪽으로 이동
 			}
 
 			nNode->Data = cNode->Data;//삭제한 원본노드
 
 			if (pNode != nullptr)//루트노드가 아닐경우
-				pNode->pLeft = cNode->pRight;//부모노드가 루트가되어 삭제되야 하는값을 자식으로 받아야한다.
+				pNode->pRight = cNode->pLeft;//부모노드가 루트가되어 삭제되야 하는값을 자식으로 받아야한다.
 			else//루트노드일경우
-				nNode->pRight = cNode->pRight;//부모가 루트노드라면
+				nNode->pLeft = cNode->pLeft;//부모가 루트노드라면
 			//바로 오른쪽 노드를 받는것 오른쪽노드의 자식을 받는다 nullptr이라면 그것대로 상관없다.
 		}
 		//삭제할 노드가(2) 하나의 서브트리만 가지고 있는 경우

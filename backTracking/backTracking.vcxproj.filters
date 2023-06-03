@@ -15,21 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="backTracking.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Profile.cpp">
+    <ClCompile Include="MazeSolver.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CRBT.cpp">
+    <ClCompile Include="Test_MazeSolver.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CRBT.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Profile.h">
+    <ClInclude Include="MazeSolver.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
