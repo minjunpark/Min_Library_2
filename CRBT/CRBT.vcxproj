@@ -129,11 +129,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CRBT.cpp" />
+    <ClCompile Include="CRT2.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Profile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CRBT.h" />
+    <ClInclude Include="CRT2.h" />
+    <ClInclude Include="CTREE.h" />
     <ClInclude Include="Profile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

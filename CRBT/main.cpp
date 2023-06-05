@@ -13,7 +13,7 @@
 #include "Profile.h"
 #include <queue>
 #pragma comment(lib, "winmm.lib")
-
+#include "CTREE.h"
 #define RANDOM(__min__, __max__) \
 	((int)(((double)((rand()<<15) | rand())) / ((RAND_MAX<<15 | RAND_MAX) + 1) \
 		* (((__max__) + 1) - (__min__))) + (__min__))
@@ -22,10 +22,13 @@ using namespace std;
 
 void RBT_INSERT_CHECK(int count,bool RBT_CHECk);
 void RBT_DELETE_CHECK(int count, bool RBT_CHECK);
+void Struct_Time_Check_RANDOM(int count, int start, int end, int max_seed);
 int main()
 {
 	timeBeginPeriod(1);
 	QueryPerformanceFrequency(&_P_Freq);//최초 시간대 한번 세팅
+	Struct_Time_Check_RANDOM(4000,1,10000,10);
+	return 0;
 	//srand((unsigned int)time(NULL));
 	
 	//CTREE tree(50);
@@ -49,26 +52,31 @@ int main()
 	//tree.RedBlack_Insert(25);
 	//tree.RedBlack_Insert(37);
 
-	//tree.RedBlack_Insert(35);
-	//tree.RedBlack_Insert(20);
-	//tree.RedBlack_Insert(50);
-	//tree.RedBlack_Insert(10);
-	//tree.RedBlack_Insert(30);
-	//tree.RedBlack_Insert(40);
-	//tree.RedBlack_Insert(80);
-	//tree.RedBlack_Insert(37);
-	//tree.RedBlack_Insert(45);
-	//tree.RedBlack_Insert(5);
-	//tree.RedBlack_Insert(15);
-	//tree.RedBlack_Insert(25);
-	//tree.RedBlack_Insert(33);
-	////tree.RedBlack_Insert(13);
-	//tree.RedBlack_Insert(2);
-	//tree.RedBlack_Insert(27);
+	tree.RedBlack_Insert(35);
+	tree.RedBlack_Insert(20);
+	tree.RedBlack_Insert(50);
+	tree.RedBlack_Insert(10);
+	tree.RedBlack_Insert(30);
+	tree.RedBlack_Insert(40);
+	tree.RedBlack_Insert(80);
+	tree.RedBlack_Insert(37);
+	tree.RedBlack_Insert(45);
+	tree.RedBlack_Insert(5);
+	tree.RedBlack_Insert(15);
+	tree.RedBlack_Insert(25);
+	tree.RedBlack_Insert(33);
+	tree.RedBlack_Insert(13);
+	tree.RedBlack_Insert(2);
+	tree.RedBlack_Insert(27);
 	//tree.RedBlack_Delete(15);
 	//tree.RedBlack_Delete(33);
 	//tree.RedBlack_Delete(37);
 	//tree.RedBlack_Delete(35);
+
+	tree.Delete(15);
+	tree.Delete(33);
+	tree.Delete(37);
+	tree.Delete(35);
 
 	//tree.RedBlack_Insert(30);
 	//tree.RedBlack_Insert(35);
@@ -105,7 +113,7 @@ int main()
 	//tree.RedBlack_Insert(96);
 
 	//RBT_INSERT_CHECK(2000,true);
-	RBT_DELETE_CHECK(2000, true);
+	RBT_DELETE_CHECK(2000, false);
 
 	//ProfileDataOutText(L"ABC");
 	//printf("\n");
@@ -199,7 +207,8 @@ int main()
 			printf("삭제할 데이터를 입력하세요");
 			scanf_s("%d", &tmpinput);
 			printf("\n");
-			tree.RedBlack_Delete(tmpinput);
+			//tree.RedBlack_Delete(tmpinput);
+			tree.Delete(tmpinput);
 			break;
 		case 3://출력
 			//tree.LevelPrint(tree.GetRootNode());
@@ -320,38 +329,42 @@ void RBT_DELETE_CHECK(int count, bool RBT_CHECK)
 	map<int, int>* maps2;
 	queue<int>* q;
 	int timeSeed = 1;
-
+	
 	while (1) {
 		srand(timeSeed);
 		tree2 = new CREDBLACKTREE;
 		maps2 = new map<int, int>;
 		q = new queue<int>;
+
 		for (int i = 0; i < count; i++)
 		{
 			int num = RANDOM(1, (count * 2));
-			//maps2->insert({ num,num });
+			maps2->insert({ num,num });
 			tree2->RedBlack_Insert(num);
 		}
 
 		for (int i = 0; i < count; i++)
 		{
 			int num = RANDOM(1, (count * 2));
+			maps2->erase(num);
+			//maps2->remove(num);
 			//maps2->insert({ num,num });
-			tree2->RedBlack_Delete(num);
+			tree2->Delete(num);
 		}
 
-		//tree2->All_Q(tree2->GetRootNode(), q);
+		tree2->All_Q(tree2->GetRootNode(), q);
 
-		//for (map<int, int>::iterator itr = maps2->begin(); itr != maps2->end(); ++itr)
-		//{
-		//	if (itr->first != q->front())
-		//	{
-		//		printf("timeSeed %d\n", timeSeed);//랜덤시드는 무엇인지
-		//		printf("itr->first %d\n", itr->first);//어느 자식에서 문제가 생겼는지
-		//		throw std::bad_exception{};//강제 에러발생
-		//	}
-		//	q->pop();
-		//}
+		for (map<int, int>::iterator itr = maps2->begin(); itr != maps2->end(); ++itr)
+		{
+			if (itr->first != q->front())
+			{
+				printf("timeSeed %d\n", timeSeed);//랜덤시드는 무엇인지
+				printf("itr->first %d\n", itr->first);//어느 자식에서 문제가 생겼는지
+				throw std::bad_exception{};//강제 에러발생
+			}
+			//rintf("map %d\n", timeSeed);
+			q->pop();
+		}
 
 		if (RBT_CHECK == true)
 			tree2->RBT_CHECK(tree2->GetRootNode());
@@ -365,16 +378,98 @@ void RBT_DELETE_CHECK(int count, bool RBT_CHECK)
 
 }
 
-void Struct_Time_Check(int count, int start, int end) //실제 성능측정
+void Struct_Time_Check_RANDOM(int count, int start, int end,int max_seed) //실제 성능측정
 {
+	//4000
 	//4가지 자료구조세팅
-	//이진트리
-	//레드블랙트리
+	CREDBLACKTREE* CRBT;//레드블랙트리
+	CTREE* CBST;//이진트리
+	int timeSeed = 1;
+
 	//map
 	//unmap
 
 	//4개의 자료구조에 카운터크기만큼 랜덤한 데이터를
 	//start부터 end까지의 범위에서 랜덤하게 넣고 뺴고
+	max_seed = 1000;
+	while (1)
+	{	
+		//srand(1);
+		if (max_seed == timeSeed)
+			break;
+
+		CRBT = new CREDBLACKTREE;
+		CBST = new CTREE;
+		
+		//입력
+		for (int i = 0; i < count; i++)
+		{
+			int num = RANDOM(start, (end * 2));
+			//레드블랙트리 삽입측정
+			PRO_BEGIN(L"RedBlack_Insert");
+			CRBT->RedBlack_Insert(num);
+			PRO_END(L"RedBlack_Insert");
+
+			//이진트리 입력 측정
+			PRO_BEGIN(L"Tree_Insert");
+			CBST->Tree_Insert(num);
+			PRO_END(L"Tree_Insert");
+		}
+
+		//검색
+		for (int i = 0; i < count; i++)
+		{
+			int num = RANDOM(start, (end * 2));
+			//레드블랙트리 삽입측정
+			PRO_BEGIN(L"RedBlack_Search");
+			CRBT->RedBlack_Search_Node(num);
+			PRO_END(L"RedBlack_Search");
+
+			//이진트리 입력 측정
+			PRO_BEGIN(L"Tree_Search");
+			CBST->Tree_Search(num);
+			PRO_END(L"Tree_Search");
+		}
+
+
+		//삭제
+		for (int i = 0; i < count; i++)
+		{
+			int num = RANDOM(start, (end * 2));
+			//레드블랙트리 삭제측정
+			PRO_BEGIN(L"RedBlack_Delete");
+			CRBT->Delete(num);
+			PRO_END(L"RedBlack_Delete");
+
+			//이진트리 삭제측정
+			PRO_BEGIN(L"Tree_Delete");
+			CBST->Tree_Delete(num);
+			PRO_END(L"Tree_Delete");
+		}
+
+
+		//for (map<int, int>::iterator itr = maps2->begin(); itr != maps2->end(); ++itr)
+		//{
+		//	if (itr->first != q->front())
+		//	{
+		//		printf("timeSeed %d\n", timeSeed);//랜덤시드는 무엇인지
+		//		printf("itr->first %d\n", itr->first);//어느 자식에서 문제가 생겼는지
+		//		throw std::bad_exception{};//강제 에러발생
+		//	}
+		//	//rintf("map %d\n", timeSeed);
+		//	q->pop();
+		//}
+
+		/*if (RBT_CHECK == true)
+			tree2->RBT_CHECK(tree2->GetRootNode());*/
+
+		printf("timeSeed %d\n", timeSeed);
+		timeSeed++;
+		//ProfileReset();
+		delete CRBT;
+		delete CBST;
+	}
+	ProfileDataOutText(L"CRBT_CBST_CHECK");
 	//같은 데이터를 넣고 검색하고 삭제 하는 시간을 측정
 
 }

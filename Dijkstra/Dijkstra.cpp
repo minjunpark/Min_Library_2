@@ -7,8 +7,7 @@ using namespace std;
 int number = 6;
 int INF = 1000000000;
 vector<pair<int, int>> graph[7];
-
-int d[7];
+int d[7];//노드까지의 최소 비용값 세팅
 
 void dijkstra(int start)
 {
@@ -45,7 +44,7 @@ int main()
 
 	for (int i = 1; i <= number; i++)
 	{
-		d[i] = INF;
+		d[i] = INF;//모든 비용은 우선은 무한이다.
 	}
 
 	graph[1].push_back(make_pair(2, 2));

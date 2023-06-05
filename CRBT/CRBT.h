@@ -4,24 +4,33 @@
 #define max(a,b) (((a)>(b))?(a):(b))//괄호를 무조건 둘러싸자
 #include <map>
 using namespace std;
+
+enum Color
+{
+	RED,
+	BLACK
+};
+
+enum
+{
+	e_BLACK = 1,
+	e_RED = 0
+};
+
+struct Node
+{
+	int Data;
+	char pColor = e_RED;//false 빨강 true 검정
+	Node* pParent = nullptr;
+	Node* pLeft = nullptr;
+	Node* pRight = nullptr;
+};
+typedef Node* NodePtr;
+
+
 class CREDBLACKTREE
 {
 public:
-	enum
-	{
-		e_BLACK = 1,
-		e_RED = 0
-	};
-
-	struct Node
-	{
-		int Data;
-		char pColor = e_RED;//false 빨강 true 검정
-		Node* pParent = nullptr;
-		Node* pLeft = nullptr;
-		Node* pRight = nullptr;
-	};
-
 	struct Trunk
 	{
 		Trunk* prev;
@@ -46,6 +55,12 @@ public:
 	CREDBLACKTREE();
 	CREDBLACKTREE(int data);
 
+	bool Delete(int item);
+	void DelteFixUp(NodePtr x);
+	NodePtr IsKey(int item);
+
+	void Transplant(NodePtr u, NodePtr v);
+
 	Node* GetRootNode() { return pRoot; }//루트노드 가져오기
 	virtual ~CREDBLACKTREE();
 
@@ -58,6 +73,8 @@ public:
 	bool RedBlack_Delete(int data);
 	void RedBlack_Delete_Refresh(Node* _DNode);
 	
+	bool RedBlack_Search(int data);
+	Node* RedBlack_Search_Node(int data);
 
 	//밸런스 작업용 도구
 	void Right_Rotation(Node* sNode);//왼쪽회전
@@ -100,6 +117,79 @@ public:
 		All_Q(pNode->pRight,q);
 	}
 
-	
+	/*x를 중심으로 왼쪽으로 회전*/
+	void RotateLeft(NodePtr x)
+	{
+		NodePtr y;
 
+		y = x->pRight;
+		x->pRight = y->pLeft;
+		if (y->pLeft != nil)
+		{
+			y->pLeft->pParent = x;
+		}
+		y->pParent = x->pParent;
+
+		if (!x->pParent)
+		{
+			pRoot = y;
+		}
+		else if (x == x->pParent->pLeft)
+		{
+			x->pParent->pLeft = y;
+		}
+		else
+		{
+			x->pParent->pRight = y;
+		}
+		x->pParent = y;
+		y->pLeft = x;
+	}
+	/*x를 중심으로 오른쪽으로 회전*/
+	void RotateRight(NodePtr y)
+	{
+		NodePtr x;
+
+		x = y->pLeft;
+		y->pLeft = x->pRight;
+		if (x->pRight != nil)
+		{
+			x->pRight->pParent = y;
+		}
+		x->pParent = y->pParent;
+
+		if (!y->pParent)
+		{
+			pRoot = x;
+		}
+		else if (y == y->pParent->pLeft)
+		{
+			y->pParent->pLeft = x;
+		}
+		else
+		{
+			y->pParent->pRight = x;
+		}
+		y->pParent = x;
+		x->pRight = y;
+	}
+
+	NodePtr tree_minimum(NodePtr x)
+	{
+		while (x->pLeft != nil)
+		{
+			x = x->pLeft;
+		}
+		return x;
+	}
+	
+	//최댓값 찾기
+	NodePtr tree_maximum(NodePtr x)
+	{
+		while (x->pRight != nil)
+		{
+			x = x->pRight;
+		}
+		return x;
+	}
 };

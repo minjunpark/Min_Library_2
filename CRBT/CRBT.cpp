@@ -39,7 +39,6 @@ CREDBLACKTREE::~CREDBLACKTREE()
 	delete_clear(pRoot);
 
 	delete nil;
-
 }
 
 void CREDBLACKTREE::delete_clear(Node* pNode)
@@ -375,20 +374,20 @@ int CREDBLACKTREE::Tree_Count(Node* pNode)
 	return count;
 }
 
-int CREDBLACKTREE::Depth_Count(Node* root)
+int CREDBLACKTREE::Depth_Count(Node* pRoot)
 {
 	int height = 0;
-	if (root != nullptr && root != nil)
+	if (pRoot != nullptr && pRoot != nil)
 	{
-		int left = Depth_Count(root->pLeft);//왼쪽노드 다확인하고 리턴
-		int right = Depth_Count(root->pRight);//오른쪽노드 다 확인하고 리턴
+		int pLeft = Depth_Count(pRoot->pLeft);//왼쪽노드 다확인하고 리턴
+		int pRight = Depth_Count(pRoot->pRight);//오른쪽노드 다 확인하고 리턴
 
 		//루트 노드는 반드시 들어가니까 1카운트하고
 		height = 1;
-		if (left > right)
-			height += left;
+		if (pLeft > pRight)
+			height += pLeft;
 		else
-			height += right;
+			height += pRight;
 	}
 	return height;
 }
@@ -398,13 +397,7 @@ bool CREDBLACKTREE::RedBlack_Delete(int data)
 {
 	Node* pNode = nil;
 	Node* cNode = pRoot;
-	Node* sNode = nullptr;
-	if (delete_Count==13)
-	{
-		printf("delete count %d\n", delete_Count);
-	}
-	printf("delete count %d\n", delete_Count);
-	
+
 	//우선 삭제해야하는 노드의 위치를 탐색한다.
 	while (cNode != nil)
 	{
@@ -428,461 +421,147 @@ bool CREDBLACKTREE::RedBlack_Delete(int data)
 
 	//현재 cNode 위치가 삭제해야하는 위치다.
 	//삭제할 노드가(1) 단말 노드인 경우
-	if (cNode->pColor == e_RED) //삭제되는 노드가 레드노드라면 이진트리방식으로 그냥 삭제해버려도 이상없다.
+	if (cNode->pLeft == nil && cNode->pRight == nil)//자식이 없는 노드라면
 	{
-		if (cNode->pLeft == nil && cNode->pRight == nil)//자식이 없는 노드라면
+		if (pNode == nil)//루트 노드일경우
+			pRoot = nullptr;//루트 노드를 제거한다.->이반복문 탈출시 cNode로 루트 자동 제거됨
+		//return true;//마지막 노드니까 삭제하지 않게하겠다.->이건뭐 정책정하기 나름인듯?
+		else if (pNode->pLeft == cNode) //부모노드의 왼쪽노드라면
 		{
-			if (pNode == nil)//루트 노드일경우
-				pRoot = nullptr;//루트 노드를 제거한다.->이반복문 탈출시 cNode로 루트 자동 제거됨
-			else if (pNode->pLeft == cNode) //부모노드의 왼쪽노드라면경
-			{
-				pNode->pLeft = nil;//왼쪽노드 nil변경
-			}
-			else//부모노드의 오른쪽노드라면
-			{
-				pNode->pRight = nil;//오른쪽노드 초기화
-			}
+			//if (cNode->pColor == e_BLACK)
+			//{
+			//	RedBlack_Delete_Refresh(cNode);//삭제되려는 노드로 재조정을 하고
+			//}
+			pNode->pLeft = nil;//왼쪽노드 초기화
 		}
-		//삭제할 노드가(3) 두 개의 서브트리를 가지고 있는 경우
-		else if (cNode->pLeft != nil && cNode->pRight != nil)
+		else//부모노드의 오른쪽노드라면
 		{
-			Node* nNode = cNode;//원본 위치 저장
-			pNode = nil;
-
-			//cNode = cNode->pRight;//오른쪽노드로 한번이동
-
-			cNode = cNode->pLeft;//왼쪽노드로 한번이동
-
-			//왼쪽 서브트리중 가장 큰놈을 찾는다.
-			while (cNode->pRight != nil)
-			{
-				pNode = cNode;//삭제해야하는 노드의 부모노드를 기록한다.
-				cNode = cNode->pRight;//노드 오른쪽으로 이동
-			}
-
-			nNode->Data = cNode->Data;//삭제한 원본노드 업데이트
-
-			if (pNode != nil)//루트노드가 아닐경우
-			{
-				pNode->pRight = cNode->pLeft;//부모노드가 루트가되어 삭제되야 하는값을 자식으로 받아야한다.
-				cNode->pLeft->pParent = pNode;
-			}
-			else if (pNode == nil)//루트노드일경우
-			{
-				nNode->pLeft = cNode->pLeft;//부모가 루트노드라면
-				cNode->pLeft->pParent = nNode;
-			}
-			
-			//바로 오른쪽 노드를 받는것 오른쪽노드의 자식을 받는다 nil이라면 그것대로 상관없다.
-		}
-		//삭제할 노드가(2) 하나의 서브트리만 가지고 있는 경우
-		else if (cNode->pLeft != nil)//왼쪽 노드만 있을경우
-		{
-			if (pNode == nil) //루트 노드일 경우
-			{//오른쪽에 아무 노드도 없다는거니까 루트를 지우고 그냥 한칸 당긴다.
-				Node* nNode = pRoot->pLeft;//스왑할 노드 위치저장
-				pRoot->Data = cNode->pLeft->Data;//루트 노드 데이터업데이트
-				pRoot->pRight = cNode->pLeft->pRight;//루트 노드 데이터 업데이트
-				pRoot->pLeft = cNode->pLeft->pLeft;//루트노드 데이터 업데이트
-				cNode = nNode;//스왑한 노드를 지운다.
-			}
-			else if (pNode->Data > cNode->Data)//삭제해야하는 데이터가 부모 노드보다 작다면
-			{
-				pNode->pLeft = cNode->pLeft;//나의 왼쪽자식은 부모노드의 왼쪽으로 이동시킨다.
-				cNode->pLeft->pParent = pNode;
-			}
-			else
-			{
-				pNode->pRight = cNode->pLeft;//나의 왼쪽자식을 부모노드의 오른쪽으로 이동시킨다.
-				cNode->pLeft->pParent = pNode;
-			}
-		}
-		else if (cNode->pRight != nil)//오른쪽노드만 있을경우
-		{
-			if (pNode == nil)//루트 노드일 경우
-			{//왼쪽에 아무 노드도 없다는거니까 그냥 한칸 당긴다
-				Node* nNode = pRoot->pRight;//원본 위치 저장
-				pRoot->Data = cNode->pRight->Data;
-				pRoot->pLeft = cNode->pRight->pLeft;
-				pRoot->pRight = cNode->pRight->pRight;
-				cNode = nNode;//삭제를위해 원본 cNode업데이트
-			}
-			else if (pNode->Data > cNode->Data)//삭제하는 데이터가 부모노드보다 작다면
-			{
-				pNode->pLeft = cNode->pRight;//나의 오른쪽 자식을 부모노드의 왼쪽으로 이동시킨다.
-				cNode->pRight->pParent = pNode;
-			}
-			else
-			{
-				pNode->pRight = cNode->pRight;//나의 오른쪽 자식을 부모노드의 오른쪽으로 이동시킨다.
-				cNode->pRight->pParent = pNode;
-			}
+			//if (cNode->pColor == e_BLACK)
+			//{
+			//	RedBlack_Delete_Refresh(cNode);//삭제되려는 노드로 재조정을 하고
+			//}
+			pNode->pRight = nil;//오른쪽노드 초기화
 		}
 	}
-	//블랙이라면
-	else if (cNode->pColor == e_BLACK)
+	//삭제할 노드가(3) 두 개의 서브트리를 가지고 있는 경우
+	else if (cNode->pLeft != nil && cNode->pRight != nil)
 	{
-		//현재 cNode 위치가 삭제해야하는 위치다.
-		//삭제할 노드가(1) 단말 노드인 경우
-		if (cNode->pLeft == nil && cNode->pRight == nil)//자식이 없는 노드라면
+		Node* nNode = cNode;//원본 위치 저장
+		pNode = nNode->pParent;
+
+		cNode = cNode->pLeft;//오른쪽노드로 한번이동
+
+		//왼쪽 서브트리중 가장 큰놈을 찾는다.
+		while (cNode->pRight != nil)
 		{
-		
-		}
-		//삭제할 노드가(3) 두 개의 서브트리를 가지고 있는 경우
-		else if (cNode->pLeft != nil && cNode->pRight != nil)
-		{
-			Node* nNode = cNode;//원본 위치 저장
-			pNode = nil;
-
-			//cNode = cNode->pRight;//오른쪽노드로 한번이동
-
-			cNode = cNode->pLeft;//왼쪽노드로 한번이동
-
-			//왼쪽 서브트리중 가장 큰놈을 찾는다.
-			while (cNode->pRight != nil)
-			{
-				pNode = cNode;//삭제해야하는 노드의 부모노드를 기록한다.
-				cNode = cNode->pRight;//노드 오른쪽으로 이동
-			}
-
-			nNode->Data = cNode->Data;//삭제한 원본노드 업데이트
-			/// <summary>
-			/// //////////////////
-			/// </summary>
-			/// <param name="data"></param>
-			/// <returns></returns>
-			if (cNode->pColor == e_RED) //삭제되는 노드가 레드노드라면 이진트리방식으로 그냥 삭제해버려도 이상없다.
-			{
-				if (cNode->pLeft == nil && cNode->pRight == nil)//자식이 없는 노드라면
-				{
-					if (pNode == nil)//루트 노드일경우
-						pRoot = nullptr;//루트 노드를 제거한다.->이반복문 탈출시 cNode로 루트 자동 제거됨
-					else if (pNode->pLeft == cNode) //부모노드의 왼쪽노드라면경
-					{
-						pNode->pLeft = nil;//왼쪽노드 nil변경
-					}
-					else//부모노드의 오른쪽노드라면
-					{
-						pNode->pRight = nil;//오른쪽노드 초기화
-					}
-				}
-				//삭제할 노드가(3) 두 개의 서브트리를 가지고 있는 경우
-				else if (cNode->pLeft != nil && cNode->pRight != nil)
-				{
-					Node* nNode = cNode;//원본 위치 저장
-					pNode = nil;
-
-					//cNode = cNode->pRight;//오른쪽노드로 한번이동
-
-					cNode = cNode->pLeft;//왼쪽노드로 한번이동
-
-					//왼쪽 서브트리중 가장 큰놈을 찾는다.
-					while (cNode->pRight != nil)
-					{
-						pNode = cNode;//삭제해야하는 노드의 부모노드를 기록한다.
-						cNode = cNode->pRight;//노드 오른쪽으로 이동
-					}
-
-					nNode->Data = cNode->Data;//삭제한 원본노드 업데이트
-
-					if (pNode != nil)//루트노드가 아닐경우
-					{
-						pNode->pRight = cNode->pLeft;//부모노드가 루트가되어 삭제되야 하는값을 자식으로 받아야한다.
-						cNode->pLeft->pParent = pNode;
-					}
-					else if (pNode == nil)//루트노드일경우
-					{
-						nNode->pLeft = cNode->pLeft;//부모가 루트노드라면
-						cNode->pLeft->pParent = nNode;
-					}
-
-					//바로 오른쪽 노드를 받는것 오른쪽노드의 자식을 받는다 nil이라면 그것대로 상관없다.
-				}
-				//삭제할 노드가(2) 하나의 서브트리만 가지고 있는 경우
-				else if (cNode->pLeft != nil)//왼쪽 노드만 있을경우
-				{
-					if (pNode == nil) //루트 노드일 경우
-					{//오른쪽에 아무 노드도 없다는거니까 루트를 지우고 그냥 한칸 당긴다.
-						Node* nNode = pRoot->pLeft;//스왑할 노드 위치저장
-						pRoot->Data = cNode->pLeft->Data;//루트 노드 데이터업데이트
-						pRoot->pRight = cNode->pLeft->pRight;//루트 노드 데이터 업데이트
-						pRoot->pLeft = cNode->pLeft->pLeft;//루트노드 데이터 업데이트
-						cNode = nNode;//스왑한 노드를 지운다.
-					}
-					else if (pNode->Data > cNode->Data)//삭제해야하는 데이터가 부모 노드보다 작다면
-					{
-						pNode->pLeft = cNode->pLeft;//나의 왼쪽자식은 부모노드의 왼쪽으로 이동시킨다.
-						cNode->pLeft->pParent = pNode;
-					}
-					else
-					{
-						pNode->pRight = cNode->pLeft;//나의 왼쪽자식을 부모노드의 오른쪽으로 이동시킨다.
-						cNode->pLeft->pParent = pNode;
-					}
-				}
-				else if (cNode->pRight != nil)//오른쪽노드만 있을경우
-				{
-					if (pNode == nil)//루트 노드일 경우
-					{//왼쪽에 아무 노드도 없다는거니까 그냥 한칸 당긴다
-						Node* nNode = pRoot->pRight;//원본 위치 저장
-						pRoot->Data = cNode->pRight->Data;
-						pRoot->pLeft = cNode->pRight->pLeft;
-						pRoot->pRight = cNode->pRight->pRight;
-						cNode = nNode;//삭제를위해 원본 cNode업데이트
-					}
-					else if (pNode->Data > cNode->Data)//삭제하는 데이터가 부모노드보다 작다면
-					{
-						pNode->pLeft = cNode->pRight;//나의 오른쪽 자식을 부모노드의 왼쪽으로 이동시킨다.
-						cNode->pRight->pParent = pNode;
-					}
-					else
-					{
-						pNode->pRight = cNode->pRight;//나의 오른쪽 자식을 부모노드의 오른쪽으로 이동시킨다.
-						cNode->pRight->pParent = pNode;
-					}
-				}
-				delete cNode;//노드제거
-				delete_Count++;
-				return true;//트루 리턴
-			}
-
-			/////////////////////////////////////////
-
-			/// <summary>
-			/// /////////////////////
-			/// </summary>
-			/// <param name="data"></param>
-			/// <returns></returns>
-			if (pNode != nil)//루트노드가 아닐경우
-			{
-				pNode->pRight = cNode->pLeft;//부모노드가 루트가되어 삭제되야 하는값을 자식으로 받아야한다.
-				cNode->pLeft->pParent = pNode;
-			}
-			else if (pNode == nil)//루트노드일경우
-			{
-				nNode->pLeft = cNode->pLeft;//부모가 루트노드라면
-				cNode->pLeft->pParent = nNode;
-			}
-			/// <summary>
-			/// /////////////////////
-			/// </summary>
-			/// <param name="data"></param>
-			/// <returns></returns>
-			
-			RedBlack_Delete_Refresh(cNode);//블랙노드라면 삭제절차를 거치기전에
-
-			if (cNode->pLeft == nil && cNode->pRight == nil)//자식이 없는 노드라면
-			{
-				if (pNode == nil)//루트 노드일경우
-					pRoot = nullptr;//루트 노드를 제거한다.->이반복문 탈출시 cNode로 루트 자동 제거됨
-				else if (pNode->pLeft == cNode) //부모노드의 왼쪽노드라면경
-				{
-					pNode->pLeft = nil;//왼쪽노드 nil변경
-				}
-				else//부모노드의 오른쪽노드라면
-				{
-					pNode->pRight = nil;//오른쪽노드 초기화
-				}
-			}
-			//삭제할 노드가(3) 두 개의 서브트리를 가지고 있는 경우
-			else if (cNode->pLeft != nil && cNode->pRight != nil)
-			{
-				Node* nNode = cNode;//원본 위치 저장
-				pNode = nil;
-
-				cNode = cNode->pLeft;//왼쪽노드로 한번이동
-
-				//왼쪽 서브트리중 가장 큰놈을 찾는다.
-				while (cNode->pRight != nil)
-				{
-					pNode = cNode;//삭제해야하는 노드의 부모노드를 기록한다.
-					cNode = cNode->pRight;//노드 오른쪽으로 이동
-				}
-
-				nNode->Data = cNode->Data;//삭제한 원본노드 업데이트
-
-				if (pNode != nil)//루트노드가 아닐경우
-				{
-					pNode->pRight = cNode->pLeft;//부모노드가 루트가되어 삭제되야 하는값을 자식으로 받아야한다.
-					cNode->pLeft->pParent = pNode;
-				}
-				else if (pNode == nil)//루트노드일경우
-				{
-					nNode->pLeft = cNode->pLeft;//부모가 루트노드라면
-					cNode->pLeft->pParent = nNode;
-				}
-				//바로 오른쪽 노드를 받는것 오른쪽노드의 자식을 받는다 nil이라면 그것대로 상관없다.
-			}
-			//삭제할 노드가(2) 하나의 서브트리만 가지고 있는 경우
-			else if (cNode->pLeft != nil)//왼쪽 노드만 있을경우
-			{
-				if (pNode == nil) //루트 노드일 경우
-				{//오른쪽에 아무 노드도 없다는거니까 루트를 지우고 그냥 한칸 당긴다.
-					Node* nNode = pRoot->pLeft;//스왑할 노드 위치저장
-					pRoot->Data = cNode->pLeft->Data;//루트 노드 데이터업데이트
-					pRoot->pRight = cNode->pLeft->pRight;//루트 노드 데이터 업데이트
-					pRoot->pLeft = cNode->pLeft->pLeft;//루트노드 데이터 업데이트
-					cNode = nNode;//스왑한 노드를 지운다.
-				}
-				else if (pNode->Data > cNode->Data)//삭제해야하는 데이터가 부모 노드보다 작다면
-				{
-					pNode->pLeft = cNode->pLeft;//나의 왼쪽자식은 부모노드의 왼쪽으로 이동시킨다.
-					cNode->pLeft->pParent = pNode;
-				}
-				else
-				{
-					pNode->pRight = cNode->pLeft;//나의 왼쪽자식을 부모노드의 오른쪽으로 이동시킨다.
-					cNode->pLeft->pParent = pNode;
-				}
-			}
-			else if (cNode->pRight != nil)//오른쪽노드만 있을경우
-			{
-				if (pNode == nil)//루트 노드일 경우
-				{//왼쪽에 아무 노드도 없다는거니까 그냥 한칸 당긴다
-					Node* nNode = pRoot->pRight;//원본 위치 저장
-					pRoot->Data = cNode->pRight->Data;
-					pRoot->pLeft = cNode->pRight->pLeft;
-					pRoot->pRight = cNode->pRight->pRight;
-					cNode = nNode;//삭제를위해 원본 cNode업데이트
-				}
-				else if (pNode->Data > cNode->Data)//삭제하는 데이터가 부모노드보다 작다면
-				{
-					pNode->pLeft = cNode->pRight;//나의 오른쪽 자식을 부모노드의 왼쪽으로 이동시킨다.
-					cNode->pRight->pParent = pNode;
-				}
-				else
-				{
-					pNode->pRight = cNode->pRight;//나의 오른쪽 자식을 부모노드의 오른쪽으로 이동시킨다.
-					cNode->pRight->pParent = pNode;
-				}
-			}
-
-			delete cNode;//노드제거
-			delete_Count++;
-			return true;//트루 리턴
-		}
-		//삭제할 노드가(2) 하나의 서브트리만 가지고 있는 경우
-		else if (cNode->pLeft != nil)//왼쪽 노드만 있을경우
-		{
-			//if (pNode == nil) //루트 노드일 경우
-			//{//오른쪽에 아무 노드도 없다는거니까 루트를 지우고 그냥 한칸 당긴다.
-			//	Node* nNode = pRoot->pLeft;//스왑할 노드 위치저장
-			//	pRoot->Data = cNode->pLeft->Data;//루트 노드 데이터업데이트
-			//	pRoot->pRight = cNode->pLeft->pRight;//루트 노드 데이터 업데이트
-			//	pRoot->pLeft = cNode->pLeft->pLeft;//루트노드 데이터 업데이트
-			//	cNode = nNode;//스왑한 노드를 지운다.
-			//}
-			//else if (pNode->Data > cNode->Data)//삭제해야하는 데이터가 부모 노드보다 작다면
-			//	pNode->pLeft = cNode->pLeft;//나의 왼쪽자식은 부모노드의 왼쪽으로 이동시킨다.
-			//else
-			//	pNode->pRight = cNode->pLeft;//나의 왼쪽자식을 부모노드의 오른쪽으로 이동시킨다.
-		}
-		else if (cNode->pRight != nil)//오른쪽노드만 있을경우
-		{
-			//if (pNode == nil)//루트 노드일 경우
-			//{//왼쪽에 아무 노드도 없다는거니까 그냥 한칸 당긴다
-			//	Node* nNode = pRoot->pRight;//원본 위치 저장
-			//	pRoot->Data = cNode->pRight->Data;
-			//	pRoot->pLeft = cNode->pRight->pLeft;
-			//	pRoot->pRight = cNode->pRight->pRight;
-			//	cNode = nNode;//삭제를위해 원본 cNode업데이트
-			//}
-			//else if (pNode->Data > cNode->Data)//삭제하는 데이터가 부모노드보다 작다면
-			//	pNode->pLeft = cNode->pRight;//나의 오른쪽 자식을 부모노드의 왼쪽으로 이동시킨다.
-			//else
-			//	pNode->pRight = cNode->pRight;//나의 오른쪽 자식을 부모노드의 오른쪽으로 이동시킨다.
+			pNode = cNode;//삭제해야하는 노드의 부모노드를 기록한다.
+			cNode = cNode->pRight;//노드 오른쪽으로 이동
 		}
 
-		//먼저 레드블랙트리의 밸런스부터 정리한다.
-		RedBlack_Delete_Refresh(cNode);//블랙노드라면 삭제절차를 거치기전에
-		
-		//그후 삭제할 노드의 상태를 판별해서 제거한다.
-		if (cNode->pLeft == nil && cNode->pRight == nil)//자식이 없는 노드라면
+		nNode->Data = cNode->Data;//삭제한 원본노드 업데이트
+
+		////대신 삭제되어야 했던 노드가 블랙노드라면
+		//if (cNode->pColor == e_BLACK)
+		//{
+		//	RedBlack_Delete_Refresh(cNode);//삭제되려는 노드부터 재조정을한다.
+		//	nil->pParent = nullptr;
+		//	delete_Count++;
+		//	delete cNode;//노드제거
+		//	return true;//트루 리턴
+		//}
+
+		if (pNode != nil)//루트노드가 아닐경우
 		{
-			if (pNode == nil)//루트 노드일경우
-				pRoot = nullptr;//루트 노드를 제거한다.->이반복문 탈출시 cNode로 루트 자동 제거됨
-			else if (pNode->pLeft == cNode) //부모노드의 왼쪽노드라면경
-				pNode->pLeft = nil;//왼쪽노드 nil변경
-			else//부모노드의 오른쪽노드라면
-				pNode->pRight = nil;//오른쪽노드 초기화
+			pNode->pRight = cNode->pLeft;//부모노드가 루트가되어 삭제되야 하는값을 자식으로 받아야한다.
+			cNode->pLeft->pParent = pNode;
 		}
-		//삭제할 노드가(3) 두 개의 서브트리를 가지고 있는 경우
-		else if (cNode->pLeft != nil && cNode->pRight != nil)
+		else if (pNode == nil)//루트노드일경우
 		{
-			Node* nNode = cNode;//원본 위치 저장
-			pNode = nil;
-
-			cNode = cNode->pLeft;//왼쪽노드로 한번이동
-
-			//왼쪽 서브트리중 가장 큰놈을 찾는다.
-			while (cNode->pRight != nil)
-			{
-				pNode = cNode;//삭제해야하는 노드의 부모노드를 기록한다.
-				cNode = cNode->pRight;//노드 오른쪽으로 이동
-			}
-
-			nNode->Data = cNode->Data;//삭제한 원본노드 업데이트
-
-			if (pNode != nil)//루트노드가 아닐경우
-			{
-				pNode->pRight = cNode->pLeft;//부모노드가 루트가되어 삭제되야 하는값을 자식으로 받아야한다.
-				cNode->pLeft->pParent = pNode;
-			}
-			else if (pNode == nil)//루트노드일경우
-			{
-				nNode->pLeft = cNode->pLeft;//부모가 루트노드라면
-				cNode->pLeft->pParent = nNode;
-			}
-			//바로 오른쪽 노드를 받는것 오른쪽노드의 자식을 받는다 nil이라면 그것대로 상관없다.
-		}
-		//삭제할 노드가(2) 하나의 서브트리만 가지고 있는 경우
-		else if (cNode->pLeft != nil)//왼쪽 노드만 있을경우
-		{
-			if (pNode == nil) //루트 노드일 경우
-			{//오른쪽에 아무 노드도 없다는거니까 루트를 지우고 그냥 한칸 당긴다.
-				Node* nNode = pRoot->pLeft;//스왑할 노드 위치저장
-				pRoot->Data = cNode->pLeft->Data;//루트 노드 데이터업데이트
-				pRoot->pRight = cNode->pLeft->pRight;//루트 노드 데이터 업데이트
-				pRoot->pLeft = cNode->pLeft->pLeft;//루트노드 데이터 업데이트
-				cNode = nNode;//스왑한 노드를 지운다.
-			}
-			else if (pNode->Data > cNode->Data)//삭제해야하는 데이터가 부모 노드보다 작다면
-			{
-				pNode->pLeft = cNode->pLeft;//나의 왼쪽자식은 부모노드의 왼쪽으로 이동시킨다.
-				cNode->pLeft->pParent = pNode;
-			}
-			else
-			{
-				pNode->pRight = cNode->pLeft;//나의 왼쪽자식을 부모노드의 오른쪽으로 이동시킨다.
-				cNode->pLeft->pParent = pNode;
-			}
-		}
-		else if (cNode->pRight != nil)//오른쪽노드만 있을경우
-		{
-			if (pNode == nil)//루트 노드일 경우
-			{//왼쪽에 아무 노드도 없다는거니까 그냥 한칸 당긴다
-				Node* nNode = pRoot->pRight;//원본 위치 저장
-				pRoot->Data = cNode->pRight->Data;
-				pRoot->pLeft = cNode->pRight->pLeft;
-				pRoot->pRight = cNode->pRight->pRight;
-				cNode = nNode;//삭제를위해 원본 cNode업데이트
-			}
-			else if (pNode->Data > cNode->Data)//삭제하는 데이터가 부모노드보다 작다면
-			{
-				pNode->pLeft = cNode->pRight;//나의 오른쪽 자식을 부모노드의 왼쪽으로 이동시킨다.
-				cNode->pRight->pParent = pNode;
-			}
-			else
-			{
-				pNode->pRight = cNode->pRight;//나의 오른쪽 자식을 부모노드의 오른쪽으로 이동시킨다.
-				cNode->pRight->pParent = pNode;
-			}
+			nNode->pLeft = cNode->pLeft;//부모가 루트노드라면
+			cNode->pLeft->pParent = nNode;//삭제되어야했던 녀석의 자식을
 		}
 
+
+		//바로 오른쪽 노드를 받는것 오른쪽노드의 자식을 받는다 nullptr이라면 그것대로 상관없다.
 	}
-	
-	delete cNode;//노드제거
+	//삭제할 노드가(2) 하나의 서브트리만 가지고 있는 경우
+	else if (cNode->pLeft != nil)//왼쪽 노드만 있을경우
+	{
+		if (pNode == nil) //루트 노드일 경우
+		{//오른쪽에 아무 노드도 없다는거니까 루트를 지우고 그냥 한칸 당긴다.
+			Node* nNode = pRoot->pLeft;//스왑할 노드 위치저장
+			pRoot->Data = cNode->pLeft->Data;//루트 노드 데이터업데이트
+			pRoot->pRight = cNode->pLeft->pRight;//루트 노드 데이터 업데이트
+			pRoot->pLeft = cNode->pLeft->pLeft;//루트노드 데이터 업데이트
+			pRoot->pParent = nil;
+			pRoot->pColor = e_BLACK;
+			cNode = nNode;//스왑한 노드를 지운다.
+		}
+		else if (pNode->Data > cNode->Data)//삭제해야하는 데이터가 부모 노드보다 작다면
+		{
+			//if (cNode->pColor == e_BLACK)
+			//{
+			//	RedBlack_Delete_Refresh(cNode);//삭제되려는 노드로 재조정을 하고
+			//}
+			pNode->pLeft = cNode->pLeft;//나의 왼쪽자식은 부모노드의 왼쪽으로 이동시킨다.
+			cNode->pLeft->pParent = pNode;
+		}
+		else
+		{
+			//if (cNode->pColor == e_BLACK)
+			//{
+			//	RedBlack_Delete_Refresh(cNode);//삭제되려는 노드로 재조정을 하고
+			//}
+			pNode->pRight = cNode->pLeft;//나의 왼쪽자식을 부모노드의 오른쪽으로 이동시킨다.
+			cNode->pLeft->pParent = pNode;
+		}
+	}
+	else if (cNode->pRight != nil)//오른쪽노드만 있을경우
+	{
+		if (pNode == nil)//루트 노드일 경우
+		{//왼쪽에 아무 노드도 없다는거니까 그냥 한칸 당긴다
+			Node* nNode = pRoot->pRight;//원본 위치 저장
+			pRoot->Data = cNode->pRight->Data;
+			pRoot->pLeft = cNode->pRight->pLeft;
+			pRoot->pRight = cNode->pRight->pRight;
+			pRoot->pParent = nil;
+			pRoot->pColor = e_BLACK;
+			cNode = nNode;//삭제를위해 원본 cNode업데이트
+		}
+		else if (pNode->Data > cNode->Data)//삭제하는 데이터가 부모노드보다 작다면
+		{
+			//if (cNode->pColor == e_BLACK)
+			//{
+			//	RedBlack_Delete_Refresh(cNode);//삭제되려는 노드로 재조정을 하고
+			//}
+			pNode->pLeft = cNode->pRight;//나의 오른쪽 자식을 부모노드의 왼쪽으로 이동시킨다.
+			cNode->pRight->pParent = pNode;
+		}
+		else
+		{
+			//if (cNode->pColor == e_BLACK)//블랙이라면 리프레시를한다.
+			//{
+			//	RedBlack_Delete_Refresh(cNode);//삭제되려는 노드로 재조정을 하고
+			//}
+			pNode->pRight = cNode->pRight;//나의 오른쪽 자식을 부모노드의 오른쪽으로 이동시킨다.
+			cNode->pRight->pParent = pNode;
+		}
+	}
+
+
+
+	////진짜 삭제되어야 했던 노드가 레드노드라면
+	if (cNode->pColor == e_BLACK)
+	{
+		//RedBlack_Delete_Refresh(cNode);//삭제되려는 노드로 재조정을 하고
+		//DelteFixUp();
+	}
+
+	//nil->pParent = nullptr;
+	nil->pParent = nullptr;
 	delete_Count++;
+	delete cNode;//노드제거
+
 	return true;//트루 리턴
 }
 
@@ -893,25 +572,15 @@ void CREDBLACKTREE::RedBlack_Delete_Refresh(Node* _DNode)//삭제정리
 	Node* _MLNode;//나의 왼족
 	Node* _MRNode;//나의 왼족
 	Node* _PNode;//나의부모
-	
+
 	Node* _SNode;//나의형제
 	Node* _SLNode;//형제 왼쪽자식
 	Node* _SRNode;//형제 오른쪽자식
 
 	_MNode = _DNode;//삭제된 나를 넣는다.
 
-	//_PNode = _MNode->pParent;//삭제된 노드의 부모
-
-	//if (_PNode->pLeft == _MNode)//삭제된 노드의 왼쪽이 나라면
-	//	_SNode = _PNode->pRight;//형제는 부모의 오른쪽노드
-	//else
-	//	_SNode = _PNode->pLeft;//형제는 부모의 왼쪽노드
-
-	//_SLNode_ = _SNode->pLeft;//형제의 왼쪽 자식
-	//_SRNode_ = _SNode->pRight;//형제의 오른쪽 자식
-
-	//while (1)
-	//{
+	if (_MNode->pParent == nil)
+		_MNode->pColor = e_BLACK;
 
 	_MLNode = _MNode->pLeft;
 	_MRNode = _MNode->pRight;
@@ -934,125 +603,127 @@ void CREDBLACKTREE::RedBlack_Delete_Refresh(Node* _DNode)//삭제정리
 	//이게 루트노드일 경우를 생각해둬야하네.
 	//버전을 2개만들자
 	//단말노드 버전하고 단말노드가 아닐때를 생각해야한다.
+	
 
-		if (_PNode->pLeft == _MNode)//내가 부모의 왼쪽자식이라면
+
+	if (_PNode->pLeft == _MNode)//내가 부모의 왼쪽자식이라면
+	{
+		//2.1 삭제 노드의 자식(기준노드)이 레드인 경우
+		if (_MNode->pLeft->pColor == e_RED)//nil이 아니면서 왼쪽이 빨강색이라면
 		{
-			//2.1 삭제 노드의 자식(기준노드)이 레드인 경우
-			if (_MNode->pLeft->pColor == e_RED)//nil이 아니면서 왼쪽이 빨강색이라면
-			{
-				//자식이 레드라면 삭제노드(블랙)이 빠짐으로
-				//삭제 노드의 자식(레드) 을 블랙으로 바꾸어줌으로 문제 해결
-				//새로 자리한 노드가 레드라면 이를 블랙으로 바꾸는걸로 마무리 됨.
-				_MNode->pLeft->pColor = e_BLACK;
-				return;
-			}
-
-			//2.2 삭제 노드의 형제가 레드
-			if (_SNode->pColor == e_RED)
-			{
-				_SNode->pColor = e_BLACK;//형제를 블랙으로 바꿈
-				Left_Rotation(_PNode);//부모를 기준으로 좌회전!!!
-				_PNode->pColor = e_RED;//기존 부모를 레드로 바꿈.
-				_MNode = _MNode->pLeft;//그리고 현재노드 (삭제 후 들어온노드, 삭제노드의 자식) 기준으로 처음부터 재작업.
-				RedBlack_Delete_Refresh(_MNode);
-			}
-
-			//2.3 삭제 노드의 형제가 블랙이고 형제의 양쪽 자식이 블랙(부모가 레드인지 아닌지에 따라)
-
-			if (_SNode->pColor == e_BLACK &&
-				_SLNode->pColor == e_BLACK &&
-				_SRNode->pColor == e_BLACK)
-			{
-				_SNode->pColor = e_RED;//이때는 형제를 레드로
-				//_MNode = _PNode;//그래서 내 부모를 기준으로 처음부터 다시 처리.
-				RedBlack_Delete_Refresh(_PNode);
-			}
-
-			//2.4 삭제 노드의 형제가 블랙이고 형제의 왼자식이 레드, 오른자식은 블랙
-
-			if (_SNode->pColor == e_BLACK &&
-				_SLNode->pColor == e_RED &&
-				_SRNode->pColor == e_BLACK)
-			{
-				_SLNode->pColor = e_BLACK;//형제의 왼자식을 블랙으로
-				_SNode->pColor = e_RED;//형제를 레드로
-				Right_Rotation(_SNode);//형제 기준으로 우회전
-				_SRNode = _SNode;
-				_SNode = _SLNode;
-			}
-
-			//2.5 삭제 노드의 형제가 블랙이고 형제의 오른자식이 레드
-
-			if (_SNode->pColor == e_BLACK &&
-				_SRNode->pColor == e_RED)
-			{
-				_SNode->pColor = _SNode->pParent->pColor;//형제 컬러를 부모 컬러로.
-				_PNode->pColor = e_BLACK;//부모 컬러는 블랙
-				_SNode->pRight->pColor = e_BLACK;//형제의 오른자식은 블랙
-				Left_Rotation(_PNode);//부모기준 좌회원   
-				return;
-				//RedBlack_Delete_Refresh(_DNode);
-			}
+			//자식이 레드라면 삭제노드(블랙)이 빠짐으로
+			//삭제 노드의 자식(레드) 을 블랙으로 바꾸어줌으로 문제 해결
+			//새로 자리한 노드가 레드라면 이를 블랙으로 바꾸는걸로 마무리 됨.
+			_MNode->pLeft->pColor = e_BLACK;
+			return;
 		}
-		else//내가 부모의 오른쪽 자식이라면
+
+		//2.2 삭제 노드의 형제가 레드
+		if (_SNode->pColor == e_RED)
 		{
-			//2.1 삭제 노드의 자식(기준노드)이 레드인 경우
-			if (_MNode->pLeft->pColor == e_RED)//nil이 아니면서 왼쪽이 빨강색이라면
-			{
-				//자식이 레드라면 삭제노드(블랙)이 빠짐으로
-				//삭제 노드의 자식(레드) 을 블랙으로 바꾸어줌으로 문제 해결
-				//새로 자리한 노드가 레드라면 이를 블랙으로 바꾸는걸로 마무리 됨.
-				_MNode->pLeft->pColor = e_BLACK;
-				return;
-			}
-
-			//2.2 삭제 노드의 오른쪽 형제가 레드
-			if (_SNode->pColor == e_RED)
-			{
-				_SNode->pColor = e_BLACK;//형제를 블랙으로 바꿈
-				Left_Rotation(_PNode);//부모를 기준으로 좌회전!!!
-				_PNode->pColor = e_RED;//기존 부모를 레드로 바꿈.
-				_MNode = _MNode->pRight;//그리고 현재노드 (삭제 후 들어온노드, 삭제노드의 자식) 기준으로 처음부터 재작업.
-				RedBlack_Delete_Refresh(_MNode);
-				//continue;
-			}
-
-			//2.3 삭제 노드의 형제가 블랙이고 형제의 양쪽 자식이 블랙(부모가 레드인지 아닌지에 따라)
-			if (_SNode->pColor == e_BLACK &&
-				_SLNode->pColor == e_BLACK &&
-				_SRNode->pColor == e_BLACK)
-			{
-				_SNode->pColor = e_RED;//이때는 형제를 레드로
-				RedBlack_Delete_Refresh(_PNode);//내 부모를 기준으로 다시 리밸런스
-				//return;
-			}
-
-			//2.4 삭제 노드의 형제가 블랙이고 형제의 왼자식이 레드, 오른자식은 블랙
-
-			if (_SNode->pColor == e_BLACK &&
-				_SRNode->pColor == e_RED &&
-				_SLNode->pColor == e_BLACK)
-			{
-				_SRNode->pColor = e_BLACK;//형제의 오른자식을 블랙으로
-				_SNode->pColor = e_RED;//형제를 레드로
-				Left_Rotation(_SNode);//형제 기준으로 좌회전
-				_SLNode = _SNode;
-				_SNode = _SRNode;
-			}
-
-			//2.5 삭제 노드의 형제가 블랙이고 형제의 오른자식이 레드
-
-			if (_SNode->pColor == e_BLACK &&
-				_SLNode->pColor == e_RED)
-			{
-				_SNode->pColor = _SNode->pParent->pColor;//형제 컬러를 부모 컬러로.
-				_PNode->pColor = e_BLACK;//부모 컬러는 블랙
-				_SNode->pLeft->pColor = e_BLACK;//형제의 왼자식은 블랙
-				Right_Rotation(_PNode);//부모기준 우회전  
-				return;
-				//RedBlack_Delete_Refresh(_DNode);
-			}
+			_SNode->pColor = e_BLACK;//형제를 블랙으로 바꿈
+			Left_Rotation(_PNode);//부모를 기준으로 좌회전!!!
+			_PNode->pColor = e_RED;//기존 부모를 레드로 바꿈.
+			_MNode = _MNode->pLeft;//그리고 현재노드 (삭제 후 들어온노드, 삭제노드의 자식) 기준으로 처음부터 재작업.
+			RedBlack_Delete_Refresh(_MNode);
 		}
+
+		//2.3 삭제 노드의 형제가 블랙이고 형제의 양쪽 자식이 블랙(부모가 레드인지 아닌지에 따라)
+
+		if (_SNode->pColor == e_BLACK &&
+			_SLNode->pColor == e_BLACK &&
+			_SRNode->pColor == e_BLACK)
+		{
+			_SNode->pColor = e_RED;//이때는 형제를 레드로
+			//_MNode = _PNode;//그래서 내 부모를 기준으로 처음부터 다시 처리.
+			RedBlack_Delete_Refresh(_PNode);
+		}
+
+		//2.4 삭제 노드의 형제가 블랙이고 형제의 왼자식이 레드, 오른자식은 블랙
+
+		if (_SNode->pColor == e_BLACK &&
+			_SLNode->pColor == e_RED &&
+			_SRNode->pColor == e_BLACK)
+		{
+			_SLNode->pColor = e_BLACK;//형제의 왼자식을 블랙으로
+			_SNode->pColor = e_RED;//형제를 레드로
+			Right_Rotation(_SNode);//형제 기준으로 우회전
+			_SRNode = _SNode;
+			_SNode = _SLNode;
+		}
+
+		//2.5 삭제 노드의 형제가 블랙이고 형제의 오른자식이 레드
+
+		if (_SNode->pColor == e_BLACK &&
+			_SRNode->pColor == e_RED)
+		{
+			_SNode->pColor = _SNode->pParent->pColor;//형제 컬러를 부모 컬러로.
+			_PNode->pColor = e_BLACK;//부모 컬러는 블랙
+			_SNode->pRight->pColor = e_BLACK;//형제의 오른자식은 블랙
+			Left_Rotation(_PNode);//부모기준 좌회원   
+			return;
+			//RedBlack_Delete_Refresh(_DNode);
+		}
+	}
+	else//내가 부모의 오른쪽 자식이라면
+	{
+		//2.1 삭제 노드의 자식(기준노드)이 레드인 경우
+		if (_MNode->pLeft->pColor == e_RED)//nil이 아니면서 왼쪽이 빨강색이라면
+		{
+			//자식이 레드라면 삭제노드(블랙)이 빠짐으로
+			//삭제 노드의 자식(레드) 을 블랙으로 바꾸어줌으로 문제 해결
+			//새로 자리한 노드가 레드라면 이를 블랙으로 바꾸는걸로 마무리 됨.
+			_MNode->pLeft->pColor = e_BLACK;
+			return;
+		}
+
+		//2.2 삭제 노드의 오른쪽 형제가 레드
+		if (_SNode->pColor == e_RED)
+		{
+			_SNode->pColor = e_BLACK;//형제를 블랙으로 바꿈
+			Left_Rotation(_PNode);//부모를 기준으로 좌회전!!!
+			_PNode->pColor = e_RED;//기존 부모를 레드로 바꿈.
+			_MNode = _MNode->pRight;//그리고 현재노드 (삭제 후 들어온노드, 삭제노드의 자식) 기준으로 처음부터 재작업.
+			RedBlack_Delete_Refresh(_MNode);
+			//continue;
+		}
+
+		//2.3 삭제 노드의 형제가 블랙이고 형제의 양쪽 자식이 블랙(부모가 레드인지 아닌지에 따라)
+		if (_SNode->pColor == e_BLACK &&
+			_SLNode->pColor == e_BLACK &&
+			_SRNode->pColor == e_BLACK)
+		{
+			_SNode->pColor = e_RED;//이때는 형제를 레드로
+			RedBlack_Delete_Refresh(_PNode);//내 부모를 기준으로 다시 리밸런스
+			//return;
+		}
+
+		//2.4 삭제 노드의 형제가 블랙이고 형제의 왼자식이 레드, 오른자식은 블랙
+
+		if (_SNode->pColor == e_BLACK &&
+			_SRNode->pColor == e_RED &&
+			_SLNode->pColor == e_BLACK)
+		{
+			_SRNode->pColor = e_BLACK;//형제의 오른자식을 블랙으로
+			_SNode->pColor = e_RED;//형제를 레드로
+			Left_Rotation(_SNode);//형제 기준으로 좌회전
+			_SLNode = _SNode;
+			_SNode = _SRNode;
+		}
+
+		//2.5 삭제 노드의 형제가 블랙이고 형제의 오른자식이 레드
+
+		if (_SNode->pColor == e_BLACK &&
+			_SLNode->pColor == e_RED)
+		{
+			_SNode->pColor = _SNode->pParent->pColor;//형제 컬러를 부모 컬러로.
+			_PNode->pColor = e_BLACK;//부모 컬러는 블랙
+			_SNode->pLeft->pColor = e_BLACK;//형제의 왼자식은 블랙
+			Right_Rotation(_PNode);//부모기준 우회전  
+			return;
+			//RedBlack_Delete_Refresh(_DNode);
+		}
+	}
 	//}
 }
 
@@ -1163,6 +834,50 @@ bool CREDBLACKTREE::Tree_Delete(int data)
 }
 
 //검색
+bool CREDBLACKTREE::RedBlack_Search(int data)
+{
+	Node* SearchNode = pRoot;//루트 노드부터 시작
+
+	while (SearchNode != nil)// || SearchNode != nil)
+	{
+		if (SearchNode->Data == data)//데이터가 있다면
+			return true;
+
+		if (SearchNode->Data > data) //현재 노드보다 데이터가 작다면 왼쪽으로 가야한다.
+		{
+			SearchNode = SearchNode->pLeft;
+		}
+		else//현재 노드보다 데이터가 크다면 오른쪽으로 가야한다.
+		{
+			SearchNode = SearchNode->pRight;
+		}
+	}
+	return false;
+}
+
+Node* CREDBLACKTREE::RedBlack_Search_Node(int data)
+{
+	Node* SearchNode = pRoot;//루트 노드부터 시작
+
+	while (SearchNode != nil)// || SearchNode != nil)
+	{
+		if (SearchNode->Data == data)//데이터가 같다면
+			return SearchNode;
+
+		if (SearchNode->Data > data) //현재 노드보다 데이터가 작다면 왼쪽으로 가야한다.
+		{
+			SearchNode = SearchNode->pLeft;
+		}
+		else//현재 노드보다 데이터가 크다면 오른쪽으로 가야한다.
+		{
+			SearchNode = SearchNode->pRight;
+		}
+	}
+	return nil;//데이터가 없다면 nil리턴
+};
+
+
+//검색
 bool CREDBLACKTREE::Tree_Search(int data)
 {
 	Node* SearchNode = pRoot;//루트 노드부터 시작
@@ -1184,7 +899,7 @@ bool CREDBLACKTREE::Tree_Search(int data)
 	return false;
 }
 
-CREDBLACKTREE::Node* CREDBLACKTREE::Tree_Search_Node(int data)
+Node* CREDBLACKTREE::Tree_Search_Node(int data)
 {
 	Node* SearchNode = pRoot;//루트 노드부터 시작
 
@@ -1270,16 +985,16 @@ void CREDBLACKTREE::showTrunks(Trunk* p)
 	cout << p->str;
 }
 
-void CREDBLACKTREE::printTree(Node* root, Trunk* prev, bool isLeft)
+void CREDBLACKTREE::printTree(Node* pRoot, Trunk* prev, bool isLeft)
 {
-	if (root == nullptr || root == nil) {
+	if (pRoot == nullptr || pRoot == nil) {
 		return;
 	}
 
 	string prev_str = "    ";
 	Trunk* trunk = new Trunk(prev, prev_str);
 
-	printTree(root->pRight, trunk, true);
+	printTree(pRoot->pRight, trunk, true);
 
 	if (!prev) {
 		trunk->str = "---";
@@ -1295,16 +1010,16 @@ void CREDBLACKTREE::printTree(Node* root, Trunk* prev, bool isLeft)
 	}
 
 	showTrunks(trunk);
-	if (root->pColor == e_BLACK)//true 검정 B출력
-		cout << " " << root->Data << "B" << endl;
+	if (pRoot->pColor == e_BLACK)//true 검정 B출력
+		cout << " " << pRoot->Data << "B" << endl;
 	else
-		cout << " " << root->Data << "R" << endl;
+		cout << " " << pRoot->Data << "R" << endl;
 	if (prev) {
 		prev->str = prev_str;
 	}
 	trunk->str = "   |";
 
-	printTree(root->pLeft, trunk, false);
+	printTree(pRoot->pLeft, trunk, false);
 }
 
 //현재 레드블랙 트리를 체크하는 코드
@@ -1537,4 +1252,230 @@ void  CREDBLACKTREE::Left_Rotation_Test(int data)
 
 	if (lNode->pParent == nil)//만약 이동하려는 노드가 Root노드라면
 		pRoot = lNode;//LNode를 루트로 바꿔준다.
+}
+
+
+NodePtr CREDBLACKTREE::IsKey(int item)
+{
+	NodePtr t = pRoot;
+	NodePtr pParent = nil;
+	
+	/*key값을 찾거나 없다면 break*/
+	while (t != nil && t != nullptr && t->Data != item)
+	{
+		pParent = t;
+		t = (item < pParent->Data) ? pParent->pLeft : pParent->pRight;
+	}
+
+	return t;
+}
+
+bool CREDBLACKTREE::Delete(int item)
+{
+	NodePtr z = IsKey(item);
+	if (z == nil)//탐색하지 못했다면 삭제한다.
+		return false;
+
+	if (!z)
+		return false;
+
+	else
+	{
+		NodePtr x, y;
+		char OriginalColor = z->pColor;
+
+		/*자식이 없거나 1개인 경우
+				삭제할 노드(z)가 블랙이면 doulbe red이므로 fix*/
+		if (z->pLeft == nil)
+		{
+			x = z->pRight;
+			Transplant(z, z->pRight);
+		}
+		else if (z->pRight == nil)
+		{
+			x = z->pLeft;
+			Transplant(z, z->pLeft);
+		}
+		else
+		{
+			if (z->pLeft == nullptr)
+				printf("z");
+			y = tree_maximum(z->pLeft);
+			OriginalColor = y->pColor;
+			x = y->pLeft; //y의 왼쪽 자식은 없다.
+
+			if (y->pParent == z)
+			{                  //z의 오른쪽 자식이 가장 작은 key
+				x->pParent = y; // x가 leafnode일 때, fix하게 될 때 사용
+			}
+			else
+			{
+				Transplant(y, y->pLeft);
+				y->pLeft = z->pLeft;
+				y->pLeft->pParent = y;
+			}
+			Transplant(z, y);
+			y->pRight = z->pRight;
+			y->pRight->pParent = y;
+			y->pColor = z->pColor;
+		}
+		delete z;
+		if (OriginalColor == BLACK)
+		{
+			DelteFixUp(x);
+		}
+	}
+	return true;
+}
+
+//bool CREDBLACKTREE::Delete(int item)
+//{
+//	NodePtr z = IsKey(item);
+//	if (!z)
+//		return false;
+//	else
+//	{
+//		NodePtr x, y;
+//		char OriginalColor = z->pColor;
+//
+//		/*자식이 없거나 1개인 경우
+//				삭제할 노드(z)가 블랙이면 doulbe red이므로 fix*/
+//		if (z->pLeft == nil)
+//		{
+//			x = z->pRight;
+//			Transplant(z, z->pRight);
+//		}
+//		else if (z->pRight == nil)
+//		{
+//			x = z->pLeft;
+//			Transplant(z, z->pLeft);
+//		}
+//		else
+//		{
+//			y = tree_minimum(z->pRight);
+//			OriginalColor = y->pColor;
+//			x = y->pRight; //y의 왼쪽 자식은 없다.
+//
+//			if (y->pParent == z)
+//			{                  //z의 오른쪽 자식이 가장 작은 key
+//				x->pParent = y; // x가 leafnode일 때, fix하게 될 때 사용
+//			}
+//			else
+//			{
+//				Transplant(y, y->pRight);
+//				y->pRight = z->pRight;
+//				y->pRight->pParent = y;
+//			}
+//			Transplant(z, y);
+//			y->pLeft = z->pLeft;
+//			y->pLeft->pParent = y;
+//			y->pColor = z->pColor;
+//		}
+//		delete z;
+//		if (OriginalColor == BLACK)
+//		{
+//			DelteFixUp(x);
+//		}
+//	}
+//	return true;
+//}
+
+void CREDBLACKTREE::Transplant(NodePtr u, NodePtr v)
+{
+	if (u->pParent == nil)
+		pRoot = v;
+	else if (u == u->pParent->pLeft)
+		u->pParent->pLeft = v;
+	else
+		u->pParent->pRight = v;
+
+	v->pParent = u->pParent;
+}
+
+void CREDBLACKTREE::DelteFixUp(NodePtr x)
+{
+	NodePtr s; //형제노드 s
+
+	//pRoot이거나 double black 이 깨질때 까지
+	while (x != pRoot && x->pColor == BLACK)
+	{
+		/* x가 p[x]의 왼쪽자식인 경우 */
+		if (x == x->pParent->pLeft)
+		{
+			s = x->pParent->pRight;
+			// case 1
+			if (s->pColor == RED)
+			{
+				s->pColor = BLACK;
+				x->pParent->pColor = RED;
+				RotateLeft(x->pParent);
+				s = x->pParent->pRight;
+			}
+
+			// case 2
+			if (s->pLeft->pColor == BLACK && s->pRight->pColor == BLACK)
+			{
+				s->pColor = RED;
+				x = x->pParent;
+			}
+			else
+			{
+				// case 3
+				if (s->pRight->pColor == BLACK)
+				{
+					s->pLeft->pColor = BLACK;
+					s->pColor = RED;
+					RotateRight(s);
+					s = x->pParent->pRight;
+				}
+
+				// case 4
+				s->pColor = x->pParent->pColor;
+				x->pParent->pColor = BLACK;
+				s->pRight->pColor = BLACK;
+				RotateLeft(x->pParent);
+				x = pRoot;
+			}
+		}
+
+		/*x가 p[x]의 오른쪽 자식인 경우*/
+		else
+		{
+			s = x->pParent->pLeft;
+			// case 1
+			if (s->pColor == RED)
+			{
+				s->pColor = BLACK;
+				x->pParent->pColor = RED;
+				RotateRight(x->pParent);
+				s = x->pParent->pLeft;
+			}
+
+			// case 2
+			if (s->pLeft->pColor == BLACK && s->pRight->pColor == BLACK)
+			{
+				s->pColor = RED;
+				x = x->pParent;
+			}
+			else
+			{
+				// case 3
+				if (s->pLeft->pColor == BLACK)
+				{
+					s->pRight->pColor = BLACK;
+					s->pColor = RED;
+					RotateLeft(s);
+					s = x->pParent->pLeft;
+				}
+				// case 4
+				s->pColor = x->pParent->pColor;
+				x->pParent->pColor = BLACK;
+				s->pLeft->pColor = BLACK;
+				RotateRight(x->pParent);
+				x = pRoot;
+			}
+		}
+	}
+	x->pColor = BLACK;
+	pRoot->pColor = BLACK;
 }
