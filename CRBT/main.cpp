@@ -198,6 +198,7 @@ int main()
 		printf("\n");
 		switch (input)
 		{
+		
 		case 1://입력
 			printf("입력할 데이터를 입력하세요");
 			scanf_s("%d", &tmpinput);
@@ -222,6 +223,7 @@ int main()
 			cout << endl;
 			//tree.printBinaryTree(tree.GetRootNode(),false);
 			tree.printTree(tree.GetRootNode(), nullptr, false);
+			
 			//printTree(tree.GetRootNode(), nullptr, false);
 			break;
 		case 4://검색
