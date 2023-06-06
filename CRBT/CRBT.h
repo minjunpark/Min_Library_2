@@ -91,7 +91,7 @@ public:
 
 	//검색
 	bool Tree_Search(int data);//있다 없다 검증
-	Node* Tree_Search_Node(int data);//위치리턴 Nil이면 없다는뜻
+	Node* Tree_Search_Node(int data);//위치리턴 nil이면 없다는뜻
 
 	void Black_Insert(int data);//오류 고의발생용
 	
@@ -117,62 +117,337 @@ public:
 		All_Q(pNode->pRight,q);
 	}
 
+	bool Remove(Node* root, int key)
+	{
+		//일단 키를 찾고
+		int a = 10;
+		a++;
+		while (root != nil)
+		{
+			if (root->Data == key) break;
+			else if (root->Data > key)
+				root = root->pLeft;
+			else
+				root = root->pRight;
+		}
+		//닐노드면 없는거니 return false
+		if (root == nil) return false;
+		//여기부턴 닐노드는 아니란의미고
+		Node* pParentNode = root->pParent;
+		Node* pSibling = pParentNode->pLeft;
+		Node* pLeftNode = root->pLeft;
+		Node* pRightNode = root->pRight;
+		if (pSibling == root) pSibling = pParentNode->pRight;
+
+		char removeNodeColor = root->pColor;
+
+		Node* param;
+		//case 1 양쪽다 nil노드라면
+		if (root->pLeft == nil && root->pRight == nil)
+		{
+			if (root == this->pRoot)
+			{
+				this->pRoot = nil;
+				delete_Count++;
+				delete root;
+				this->pRoot->pColor = e_BLACK;
+				return true;
+			}
+			else if (root == pParentNode->pLeft)
+			{
+				pParentNode->pLeft = nil;
+				nil->pParent = pParentNode;
+			}
+			else
+			{
+				pParentNode->pRight = nil;
+				nil->pParent= pParentNode;
+			}
+			param = nil;
+		}
+		//case 2 left만 nil노드라면
+		else if (root->pLeft == nil)
+		{
+			if (root == this->pRoot)
+			{
+				this->pRoot = root->pRight;
+				delete_Count++;
+				delete root;
+				this->pRoot->pColor = e_BLACK;
+				return true;
+			}
+			else if (pParentNode->pLeft == root)
+			{
+				pParentNode->pLeft = pRightNode;
+				pRightNode->pParent = pParentNode;
+			}
+			else
+			{
+				pParentNode->pRight = pRightNode;
+				pRightNode->pParent = pParentNode;
+			}
+			param = pRightNode;
+		}
+		//case 3 right만 nil노드라면
+		else if (root->pRight == nil)
+		{
+			if (root == this->pRoot)
+			{
+				this->pRoot = root->pLeft;
+				delete_Count++;
+				delete root;
+				this->pRoot->pColor = e_BLACK;
+				return true;
+			}
+			if (pParentNode->pLeft == root)
+			{
+				pParentNode->pLeft = pLeftNode;
+				pLeftNode->pParent = pParentNode;
+			}
+			else
+			{
+				pParentNode->pRight = pLeftNode;
+				pLeftNode->pParent = pParentNode;
+			}
+			param = pLeftNode;
+		}
+		//case 4 양쪽다 nil노드가 아니라면
+		else
+		{
+			Node* temp = root->pLeft;
+			while (temp->pRight != nil)
+				temp = temp->pRight;
+			root->Data = temp->Data;
+			removeNodeColor = temp->pColor;
+			Node* tempParent = temp->pParent;
+			if (tempParent == root)
+			{
+				tempParent->pLeft = temp->pLeft;
+				temp->pLeft->pParent = tempParent;
+				param = tempParent->pLeft;
+			}
+			else
+			{
+				tempParent->pRight = temp->pLeft;
+				temp->pLeft->pParent = tempParent;
+				param = temp->pLeft;
+			}
+			root = temp;
+		}
+		if (removeNodeColor == e_BLACK)
+			ReBalanceTree(param);
+
+		this->pRoot->pColor = nil->pColor = e_BLACK;
+		this->pRoot->pParent = nil;
+		nil->pLeft = nil->pParent = nil->pRight = nil;
+		delete_Count++;
+		delete root;
+		return true;
+	}
+
+	void ReBalanceTree(Node* root)
+	{
+		while (root != this->pRoot)
+		{
+			if (root->pColor == e_RED)
+			{
+				root->pColor = e_BLACK;
+				return;
+			}
+			Node* pParentNode = root->pParent;
+			Node* pSiblingNode = pParentNode->pLeft;
+			if (pSiblingNode == root)
+				pSiblingNode = pParentNode->pRight;
+			Node* pSiblingLeftNode = pSiblingNode->pLeft;
+			Node* pSiblingRightNode = pSiblingNode->pRight;
+
+			if (pSiblingNode == pParentNode->pRight)
+			{
+				if (pSiblingNode->pColor == e_RED)
+				{
+					pSiblingNode->pColor = e_BLACK;
+					pParentNode->pColor = e_RED;
+					RotateLeft(pParentNode);
+					continue;
+				}
+				else if (pSiblingNode->pColor == e_BLACK && pSiblingLeftNode->pColor == 
+					e_BLACK && pSiblingRightNode->pColor == e_BLACK)
+				{
+					pSiblingNode->pColor = e_RED;
+					root = pParentNode;
+					continue;
+				}
+				else if (pSiblingNode->pColor == e_BLACK && pSiblingLeftNode->pColor ==
+					e_RED && pSiblingRightNode->pColor == e_BLACK)
+				{
+					pSiblingLeftNode->pColor = e_BLACK;
+					pSiblingNode->pColor = e_RED;
+					RotateRight(pSiblingNode);
+					pSiblingNode = pParentNode->pRight;
+					pSiblingLeftNode = pSiblingNode->pLeft;
+					pSiblingRightNode = pSiblingNode->pRight;
+				}
+				pSiblingNode->pColor = pParentNode->pColor;
+				pParentNode->pColor = e_BLACK;
+				pSiblingRightNode->pColor = e_BLACK;
+				RotateLeft(pParentNode);
+				break;
+			}
+			else
+			{
+				if (pSiblingNode->pColor == e_RED)
+				{
+					pSiblingNode->pColor = e_BLACK;
+					pParentNode->pColor = e_RED;
+					RotateRight(pParentNode);
+					continue;
+				}
+				else if (pSiblingNode->pColor == e_BLACK && pSiblingRightNode->pColor ==
+					e_BLACK && pSiblingLeftNode->pColor == e_BLACK)
+				{
+					pSiblingNode->pColor = e_RED;
+					root = pParentNode;
+					continue;
+				}
+				else if (pSiblingNode->pColor == e_BLACK && pSiblingRightNode->pColor ==
+					e_RED && pSiblingLeftNode->pColor == e_BLACK)
+				{
+					pSiblingRightNode->pColor = e_BLACK;
+					pSiblingNode->pColor = e_RED;
+					RotateLeft(pSiblingNode);
+					pSiblingNode = pParentNode->pLeft;
+					pSiblingLeftNode = pSiblingNode->pLeft;
+					pSiblingRightNode = pSiblingNode->pRight;
+				}
+				pSiblingNode->pColor = pParentNode->pColor;
+				pParentNode->pColor = e_BLACK;
+				pSiblingLeftNode->pColor = e_BLACK;
+				RotateRight(pParentNode);
+				break;
+			}
+		}
+	}
+
+	void RotateRight(Node* root)
+	{
+		Node* pParentNode = root->pParent;
+		Node* pLeftNode = root->pLeft;
+		Node* pRightNode = root->pRight;
+		Node* pGrandChildNode = root->pLeft->pRight;
+
+		if (pParentNode->pRight == root)
+		{
+			pParentNode->pRight = pLeftNode;
+			pLeftNode->pParent = pParentNode;
+			pGrandChildNode->pParent = root;
+			root->pLeft = pGrandChildNode;
+			pLeftNode->pRight = root;
+			root->pParent = pLeftNode;
+			if (this->pRoot == root)
+				this->pRoot = pRightNode;
+		}
+		else
+		{
+			pParentNode->pLeft = pLeftNode;
+			pLeftNode->pParent = pParentNode;
+			root->pLeft = pGrandChildNode;
+			pGrandChildNode->pParent = root;
+			root->pParent = pLeftNode;
+			pLeftNode->pRight = root;
+
+			if (this->pRoot == root)
+				this->pRoot = pLeftNode;
+		}
+	}
+
+	void RotateLeft(Node* root)
+	{
+		Node* pParentNode = root->pParent;
+		Node* pRightNode = root->pRight;
+		Node* pLeftNode = root->pLeft;
+		Node* pGrandChildNode = root->pRight->pLeft;
+		if (pParentNode->pRight == root)
+		{
+			pParentNode->pRight = pRightNode;
+			pRightNode->pParent = pParentNode;
+			root->pParent = pRightNode;
+			pRightNode->pLeft = root;
+			root->pRight = pGrandChildNode;
+			pGrandChildNode->pParent = root;
+
+			if (this->pRoot == root)
+				this->pRoot = pLeftNode;
+		}
+		else
+		{
+			pParentNode->pLeft = pRightNode;
+			pRightNode->pParent = pParentNode;
+			root->pParent = pRightNode;
+			pRightNode->pLeft = root;
+			root->pRight = pGrandChildNode;
+			pGrandChildNode->pParent = root;
+
+			if (this->pRoot == root)
+				this->pRoot = pRightNode;
+		}
+	}
+
 	/*x를 중심으로 왼쪽으로 회전*/
-	void RotateLeft(NodePtr x)
-	{
-		NodePtr y;
+	//void RotateLeft(NodePtr x)
+	//{
+	//	NodePtr y;
 
-		y = x->pRight;
-		x->pRight = y->pLeft;
-		if (y->pLeft != nil)
-		{
-			y->pLeft->pParent = x;
-		}
-		y->pParent = x->pParent;
+	//	y = x->pRight;
+	//	x->pRight = y->pLeft;
+	//	if (y->pLeft != nil)
+	//	{
+	//		y->pLeft->pParent = x;
+	//	}
+	//	y->pParent = x->pParent;
 
-		if (!x->pParent)
-		{
-			pRoot = y;
-		}
-		else if (x == x->pParent->pLeft)
-		{
-			x->pParent->pLeft = y;
-		}
-		else
-		{
-			x->pParent->pRight = y;
-		}
-		x->pParent = y;
-		y->pLeft = x;
-	}
-	/*x를 중심으로 오른쪽으로 회전*/
-	void RotateRight(NodePtr y)
-	{
-		NodePtr x;
+	//	if (!x->pParent)
+	//	{
+	//		pRoot = y;
+	//	}
+	//	else if (x == x->pParent->pLeft)
+	//	{
+	//		x->pParent->pLeft = y;
+	//	}
+	//	else
+	//	{
+	//		x->pParent->pRight = y;
+	//	}
+	//	x->pParent = y;
+	//	y->pLeft = x;
+	//}
+	///*x를 중심으로 오른쪽으로 회전*/
+	//void RotateRight(NodePtr y)
+	//{
+	//	NodePtr x;
 
-		x = y->pLeft;
-		y->pLeft = x->pRight;
-		if (x->pRight != nil)
-		{
-			x->pRight->pParent = y;
-		}
-		x->pParent = y->pParent;
+	//	x = y->pLeft;
+	//	y->pLeft = x->pRight;
+	//	if (x->pRight != nil)
+	//	{
+	//		x->pRight->pParent = y;
+	//	}
+	//	x->pParent = y->pParent;
 
-		if (!y->pParent)
-		{
-			pRoot = x;
-		}
-		else if (y == y->pParent->pLeft)
-		{
-			y->pParent->pLeft = x;
-		}
-		else
-		{
-			y->pParent->pRight = x;
-		}
-		y->pParent = x;
-		x->pRight = y;
-	}
+	//	if (!y->pParent)
+	//	{
+	//		pRoot = x;
+	//	}
+	//	else if (y == y->pParent->pLeft)
+	//	{
+	//		y->pParent->pLeft = x;
+	//	}
+	//	else
+	//	{
+	//		y->pParent->pRight = x;
+	//	}
+	//	y->pParent = x;
+	//	x->pRight = y;
+	//}
 
 	NodePtr tree_minimum(NodePtr x)
 	{
@@ -192,4 +467,5 @@ public:
 		}
 		return x;
 	}
+
 };

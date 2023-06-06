@@ -1061,8 +1061,9 @@ int CREDBLACKTREE::RBT_CHECK(Node* _pNode)
 			printf("black_depthError\n");
 			printf("_tmpNode->P->Data %d\n", _pNode->pParent->Data);
 			printf("_tmpNode->Data %d\n", _pNode->Data);
-			//printTree(pRoot, nullptr, false);
+			printTree(pRoot, nullptr, false);
 			throw std::bad_exception{};//고의 에러 발생시키기
+
 			return 2;
 		}
 	}
@@ -1079,12 +1080,8 @@ int CREDBLACKTREE::RBT_CHECK(Node* _pNode)
 	//넣은것과 현재 존재하는것이 다르다
 	//노드가 유실되고 있는 상황
 
-
 	return 1;//1 true 이면 현재 모든 노드상태가 정상이라는 뜻
 }
-
-
-
 
 void CREDBLACKTREE::LevelPrint(Node* pNode)
 {
@@ -1273,12 +1270,12 @@ NodePtr CREDBLACKTREE::IsKey(int item)
 bool CREDBLACKTREE::Delete(int item)
 {
 	NodePtr z = IsKey(item);
-	if (z == nil)//탐색하지 못했다면 삭제한다.
-		return false;
+	//if (z == nil)//탐색하지 못했다면 삭제한다.
+	//	return false;
 
-	if (!z)
+	//if (!z || z == nil)
+	if (z == nil)
 		return false;
-
 	else
 	{
 		NodePtr x, y;
@@ -1327,58 +1324,6 @@ bool CREDBLACKTREE::Delete(int item)
 	}
 	return true;
 }
-
-//bool CREDBLACKTREE::Delete(int item)
-//{
-//	NodePtr z = IsKey(item);
-//	if (!z)
-//		return false;
-//	else
-//	{
-//		NodePtr x, y;
-//		char OriginalColor = z->pColor;
-//
-//		/*자식이 없거나 1개인 경우
-//				삭제할 노드(z)가 블랙이면 doulbe red이므로 fix*/
-//		if (z->pLeft == nil)
-//		{
-//			x = z->pRight;
-//			Transplant(z, z->pRight);
-//		}
-//		else if (z->pRight == nil)
-//		{
-//			x = z->pLeft;
-//			Transplant(z, z->pLeft);
-//		}
-//		else
-//		{
-//			y = tree_minimum(z->pRight);
-//			OriginalColor = y->pColor;
-//			x = y->pRight; //y의 왼쪽 자식은 없다.
-//
-//			if (y->pParent == z)
-//			{                  //z의 오른쪽 자식이 가장 작은 key
-//				x->pParent = y; // x가 leafnode일 때, fix하게 될 때 사용
-//			}
-//			else
-//			{
-//				Transplant(y, y->pRight);
-//				y->pRight = z->pRight;
-//				y->pRight->pParent = y;
-//			}
-//			Transplant(z, y);
-//			y->pLeft = z->pLeft;
-//			y->pLeft->pParent = y;
-//			y->pColor = z->pColor;
-//		}
-//		delete z;
-//		if (OriginalColor == BLACK)
-//		{
-//			DelteFixUp(x);
-//		}
-//	}
-//	return true;
-//}
 
 void CREDBLACKTREE::Transplant(NodePtr u, NodePtr v)
 {
@@ -1479,3 +1424,4 @@ void CREDBLACKTREE::DelteFixUp(NodePtr x)
 	x->pColor = BLACK;
 	pRoot->pColor = BLACK;
 }
+

@@ -12,6 +12,7 @@
 #include <map>
 #include "Profile.h"
 #include <queue>
+
 #pragma comment(lib, "winmm.lib")
 #include "CTREE.h"
 #define RANDOM(__min__, __max__) \
@@ -27,7 +28,7 @@ int main()
 {
 	timeBeginPeriod(1);
 	QueryPerformanceFrequency(&_P_Freq);//최초 시간대 한번 세팅
-	Struct_Time_Check_RANDOM(4000,1,10000,10);
+	Struct_Time_Check_RANDOM(50000,1,50000,2000);
 	return 0;
 	//srand((unsigned int)time(NULL));
 	
@@ -391,10 +392,9 @@ void Struct_Time_Check_RANDOM(int count, int start, int end,int max_seed) //실�
 
 	//4개의 자료구조에 카운터크기만큼 랜덤한 데이터를
 	//start부터 end까지의 범위에서 랜덤하게 넣고 뺴고
-	max_seed = 1000;
 	while (1)
 	{	
-		//srand(1);
+		srand(timeSeed);
 		if (max_seed == timeSeed)
 			break;
 
@@ -404,41 +404,42 @@ void Struct_Time_Check_RANDOM(int count, int start, int end,int max_seed) //실�
 		//입력
 		for (int i = 0; i < count; i++)
 		{
-			int num = RANDOM(start, (end * 2));
+			int num = RANDOM(start, end);
 			//레드블랙트리 삽입측정
-			PRO_BEGIN(L"RedBlack_Insert");
+			//PRO_BEGIN(L"RedBlack_Insert");
 			CRBT->RedBlack_Insert(num);
-			PRO_END(L"RedBlack_Insert");
-
+			//PRO_END(L"RedBlack_Insert");
+			
 			//이진트리 입력 측정
-			PRO_BEGIN(L"Tree_Insert");
-			CBST->Tree_Insert(num);
-			PRO_END(L"Tree_Insert");
+			//PRO_BEGIN(L"Tree_Insert");
+			//CBST->Tree_Insert(num);
+			//PRO_END(L"Tree_Insert");
 		}
-
+		
+		
 		//검색
 		for (int i = 0; i < count; i++)
 		{
-			int num = RANDOM(start, (end * 2));
+			int num = RANDOM(start, end);
 			//레드블랙트리 삽입측정
-			PRO_BEGIN(L"RedBlack_Search");
+			//PRO_BEGIN(L"RedBlack_Search");
 			CRBT->RedBlack_Search_Node(num);
-			PRO_END(L"RedBlack_Search");
+			//PRO_END(L"RedBlack_Search");
 
 			//이진트리 입력 측정
-			PRO_BEGIN(L"Tree_Search");
+			//PRO_BEGIN(L"Tree_Search");
 			CBST->Tree_Search(num);
-			PRO_END(L"Tree_Search");
+			//PRO_END(L"Tree_Search");
 		}
 
 
 		//삭제
 		for (int i = 0; i < count; i++)
 		{
-			int num = RANDOM(start, (end * 2));
+			int num = RANDOM(start, end);
 			//레드블랙트리 삭제측정
 			PRO_BEGIN(L"RedBlack_Delete");
-			CRBT->Delete(num);
+			CRBT->Remove(CRBT->GetRootNode(),num);
 			PRO_END(L"RedBlack_Delete");
 
 			//이진트리 삭제측정
@@ -447,6 +448,7 @@ void Struct_Time_Check_RANDOM(int count, int start, int end,int max_seed) //실�
 			PRO_END(L"Tree_Delete");
 		}
 
+		CRBT->RBT_CHECK(CRBT->GetRootNode());
 
 		//for (map<int, int>::iterator itr = maps2->begin(); itr != maps2->end(); ++itr)
 		//{
@@ -460,14 +462,12 @@ void Struct_Time_Check_RANDOM(int count, int start, int end,int max_seed) //실�
 		//	q->pop();
 		//}
 
-		/*if (RBT_CHECK == true)
-			tree2->RBT_CHECK(tree2->GetRootNode());*/
-
 		printf("timeSeed %d\n", timeSeed);
 		timeSeed++;
 		//ProfileReset();
 		delete CRBT;
 		delete CBST;
+		//ProfilePrint();
 	}
 	ProfileDataOutText(L"CRBT_CBST_CHECK");
 	//같은 데이터를 넣고 검색하고 삭제 하는 시간을 측정

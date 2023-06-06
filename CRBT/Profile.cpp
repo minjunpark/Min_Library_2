@@ -17,7 +17,7 @@ struct PROFILE_INFO
 };
 
 enum {
-	PROFILE_SIZE = 50
+	PROFILE_SIZE = 50//최대 프로파일 개수
 };
 
 const char* _tag;//태그 이름
@@ -129,13 +129,27 @@ void ProfileDataOutText(const WCHAR* szFileName)
 		if (_P_ARR[iPA].lFlag)//플래그가 있다면
 		{
 			__int64 iTotal = _P_ARR[iPA].iTotalTime - (_P_ARR[iPA].iMax[0] + _P_ARR[iPA].iMin[0]);//최소값 최대값 평균제외해서 더하기
-			__int64 iAverage = iTotal / (_P_ARR[iPA].iCall - 2);//평균시간 구하기 -2는 최소 최대값 제외
-
+			__int64 iAverage = (double) iTotal / (_P_ARR[iPA].iCall - 2);//평균시간 구하기 -2는 최소 최대값 제외
+			
 			double dftTotalDu = (double)iAverage * 1000.0 / (double)_P_Freq.QuadPart;         //평균밀리세컨드 계산
 			double dftMinDu = (double)_P_ARR[iPA].iMin[0] * 1000.0 / (double)_P_Freq.QuadPart;//최소값 밀리세컨드 계산
 			double dftMaxDu = (double)_P_ARR[iPA].iMax[0] * 1000.0 / (double)_P_Freq.QuadPart;//최대값 밀리세컨드 계산
 
-			fwprintf(_P_FILE, L"%16s | %10.4lf㎲ | %10.4lf㎲ | %10.4lf㎲ | %10lld |\n",
+			//double dftTotalDu = (double)iAverage * 1000.0 / (double)_P_Freq.QuadPart;         //평균밀리세컨드 계산
+			//double dftMinDu = (double)_P_ARR[iPA].iMin[0] * 1000.0 / (double)_P_Freq.QuadPart;//최소값 밀리세컨드 계산
+			//double dftMaxDu = (double)_P_ARR[iPA].iMax[0] * 1000.0 / (double)_P_Freq.QuadPart;//최대값 밀리세컨드 계산
+
+
+			//fprintf(file, "%s,%u,%.10llf,%.10llf,%.10llf,%.10llf,%.10llf,%.10llf,%.10lld\n",
+			//	samples[i].profileSample[j].profileName,
+			//	samples[i].threadID, totalTime, (double)(totalTime / (double)callCountsExceptMinMax),
+			//	min0, min1 / freq.QuadPart, max0 / freq.QuadPart, max1 / freq.QuadPart,
+			//	callCountsExceptMinMax);
+			//printf("%lld : %lld \n",iTotal , (_P_ARR[iPA].iCall - 2));
+			//fwprintf(_P_FILE, L"%16s | %10.4lf㎲ | %10.4lf㎲ | %10.4lf㎲ | %10lld |\n",
+			//	_P_ARR[iPA].szName, dftTotalDu, dftMinDu, dftMaxDu, _P_ARR[iPA].iCall);//포맷화 시켜서 입력
+			//% s, % u, % .10llf, % .10llf, % .10llf, % .10llf, % .10llf, % .10llf, % .10lld\n
+			fwprintf(_P_FILE, L"%16s | %.10llf㎲ | %.10llf㎲ | %.10llf㎲ | %10lld |\n",
 				_P_ARR[iPA].szName, dftTotalDu, dftMinDu, dftMaxDu, _P_ARR[iPA].iCall);//포맷화 시켜서 입력
 		}
 	}
