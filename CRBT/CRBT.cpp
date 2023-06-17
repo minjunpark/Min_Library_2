@@ -58,7 +58,7 @@ void CREDBLACKTREE::RedBlack_Insert(int data)
 	if (data <= 0) //0이하의 데이터는 처리하지 않겠다.
 		return;
 
-	if (pRoot == nullptr)//루트노드가 없다면
+	if (pRoot == nullptr || pRoot==nil)//루트노드가 없다면
 	{
 		pRoot = new Node;
 		pRoot->pColor = e_BLACK;//블랙
@@ -1251,177 +1251,316 @@ void  CREDBLACKTREE::Left_Rotation_Test(int data)
 		pRoot = lNode;//LNode를 루트로 바꿔준다.
 }
 
-
-NodePtr CREDBLACKTREE::IsKey(int item)
+void CREDBLACKTREE::All_Q(Node* pNode, queue<int>* q)
 {
-	NodePtr t = pRoot;
-	NodePtr pParent = nil;
-	
-	/*key값을 찾거나 없다면 break*/
-	while (t != nil && t != nullptr && t->Data != item)
-	{
-		pParent = t;
-		t = (item < pParent->Data) ? pParent->pLeft : pParent->pRight;
-	}
+	if (pNode == nullptr || pNode == nil)
+		return;
 
-	return t;
+	//중위 순회로 모든 데이터 출력
+	All_Q(pNode->pLeft, q);
+	q->push(pNode->Data);//중위순회로 루트의 모든 노드를 넣는다.
+	All_Q(pNode->pRight, q);
 }
 
-bool CREDBLACKTREE::Delete(int item)
+bool CREDBLACKTREE::Remove(Node* root, int key)
 {
-	NodePtr z = IsKey(item);
-	//if (z == nil)//탐색하지 못했다면 삭제한다.
-	//	return false;
+	//Node* pNode = nil;
+	//Node* cNode = pRoot;
 
-	//if (!z || z == nil)
-	if (z == nil)
+	//키를 찾는다.
+	while (root != nil)
+	{
+		if (root->Data == key) //데이터를 찾았다.
+		{
+			break;//찾았으니까 정지
+		}
+
+		//내가 더 작다면 왼쪽으로
+		if (root->Data > key)
+		{
+			root = root->pLeft;
+		}
+		else//오른쪽으로 간다.
+		{
+			root = root->pRight;
+		}
+	}
+
+	//닐노드면 못찾은거임
+	if (root == nil)
 		return false;
-	else
-	{
-		NodePtr x, y;
-		char OriginalColor = z->pColor;
 
-		/*자식이 없거나 1개인 경우
-				삭제할 노드(z)가 블랙이면 doulbe red이므로 fix*/
-		if (z->pLeft == nil)
+	//여기부턴 닐노드는 아니란의미고
+	Node* pNode = root->pParent;//나의 부모
+	Node* pSibling = pNode->pLeft;//내부모의 왼쪽
+	Node* pLeftNode = root->pLeft;//왼쪽
+	Node* pRightNode = root->pRight;//오른쪽
+
+	if (pSibling == root) //내가 왼쪽이면 
+	{
+		pSibling = pNode->pRight;//오른쪼으로 세팅한다
+	}
+
+	char removeNodeColor = root->pColor;//지금 삭제하려는 노드의 색깔은?
+
+	Node* cNode;//임시노드
+
+	//case 1 양쪽다 nil노드라면
+	if (root->pLeft == nil && root->pRight == nil)
+	{
+		if (root == pRoot)//현재 노드가 루트라면
 		{
-			x = z->pRight;
-			Transplant(z, z->pRight);
+			pRoot = nil;//루트노드를 없게만들고
+			delete_Count++;//삭제카운터 증가
+			delete root;//루트를 제거한다.
+			pRoot->pColor = e_BLACK;//루트는 항상 블랙이다
+			return true;
 		}
-		else if (z->pRight == nil)
+		else if (root == pNode->pLeft)//내가 부모의 왼쪽이라면
 		{
-			x = z->pLeft;
-			Transplant(z, z->pLeft);
+			pNode->pLeft = nil;//왼쪽을 nil로 만들고
+			nil->pParent = pNode;//밸런스 작업을위해 nil의 부모를 나로잡는다.
 		}
 		else
 		{
-			if (z->pLeft == nullptr)
-				printf("z");
-			y = tree_maximum(z->pLeft);
-			OriginalColor = y->pColor;
-			x = y->pLeft; //y의 왼쪽 자식은 없다.
-
-			if (y->pParent == z)
-			{                  //z의 오른쪽 자식이 가장 작은 key
-				x->pParent = y; // x가 leafnode일 때, fix하게 될 때 사용
-			}
-			else
-			{
-				Transplant(y, y->pLeft);
-				y->pLeft = z->pLeft;
-				y->pLeft->pParent = y;
-			}
-			Transplant(z, y);
-			y->pRight = z->pRight;
-			y->pRight->pParent = y;
-			y->pColor = z->pColor;
+			pNode->pRight = nil;
+			nil->pParent = pNode;
 		}
-		delete z;
-		if (OriginalColor == BLACK)
-		{
-			DelteFixUp(x);
-		}
+		cNode = nil;
 	}
-	return true;
-}
-
-void CREDBLACKTREE::Transplant(NodePtr u, NodePtr v)
-{
-	if (u->pParent == nil)
-		pRoot = v;
-	else if (u == u->pParent->pLeft)
-		u->pParent->pLeft = v;
-	else
-		u->pParent->pRight = v;
-
-	v->pParent = u->pParent;
-}
-
-void CREDBLACKTREE::DelteFixUp(NodePtr x)
-{
-	NodePtr s; //형제노드 s
-
-	//pRoot이거나 double black 이 깨질때 까지
-	while (x != pRoot && x->pColor == BLACK)
+	//case 2 left만 nil노드라면
+	else if (root->pLeft == nil)
 	{
-		/* x가 p[x]의 왼쪽자식인 경우 */
-		if (x == x->pParent->pLeft)
+		if (root == pRoot)
 		{
-			s = x->pParent->pRight;
-			// case 1
-			if (s->pColor == RED)
-			{
-				s->pColor = BLACK;
-				x->pParent->pColor = RED;
-				RotateLeft(x->pParent);
-				s = x->pParent->pRight;
-			}
-
-			// case 2
-			if (s->pLeft->pColor == BLACK && s->pRight->pColor == BLACK)
-			{
-				s->pColor = RED;
-				x = x->pParent;
-			}
-			else
-			{
-				// case 3
-				if (s->pRight->pColor == BLACK)
-				{
-					s->pLeft->pColor = BLACK;
-					s->pColor = RED;
-					RotateRight(s);
-					s = x->pParent->pRight;
-				}
-
-				// case 4
-				s->pColor = x->pParent->pColor;
-				x->pParent->pColor = BLACK;
-				s->pRight->pColor = BLACK;
-				RotateLeft(x->pParent);
-				x = pRoot;
-			}
+			pRoot = root->pRight;
+			delete_Count++;
+			delete root;
+			pRoot->pColor = e_BLACK;
+			return true;
 		}
-
-		/*x가 p[x]의 오른쪽 자식인 경우*/
+		else if (pNode->pLeft == root)
+		{
+			pNode->pLeft = pRightNode;
+			pRightNode->pParent = pNode;
+		}
 		else
 		{
-			s = x->pParent->pLeft;
-			// case 1
-			if (s->pColor == RED)
-			{
-				s->pColor = BLACK;
-				x->pParent->pColor = RED;
-				RotateRight(x->pParent);
-				s = x->pParent->pLeft;
-			}
-
-			// case 2
-			if (s->pLeft->pColor == BLACK && s->pRight->pColor == BLACK)
-			{
-				s->pColor = RED;
-				x = x->pParent;
-			}
-			else
-			{
-				// case 3
-				if (s->pLeft->pColor == BLACK)
-				{
-					s->pRight->pColor = BLACK;
-					s->pColor = RED;
-					RotateLeft(s);
-					s = x->pParent->pLeft;
-				}
-				// case 4
-				s->pColor = x->pParent->pColor;
-				x->pParent->pColor = BLACK;
-				s->pLeft->pColor = BLACK;
-				RotateRight(x->pParent);
-				x = pRoot;
-			}
+			pNode->pRight = pRightNode;
+			pRightNode->pParent = pNode;
 		}
+		cNode = pRightNode;
 	}
-	x->pColor = BLACK;
-	pRoot->pColor = BLACK;
+	//case 3 right만 nil노드라면
+	else if (root->pRight == nil)
+	{
+		if (root == this->pRoot)
+		{
+			this->pRoot = root->pLeft;
+			delete_Count++;
+			delete root;
+			this->pRoot->pColor = e_BLACK;
+			return true;
+		}
+		if (pNode->pLeft == root)
+		{
+			pNode->pLeft = pLeftNode;
+			pLeftNode->pParent = pNode;
+		}
+		else
+		{
+			pNode->pRight = pLeftNode;
+			pLeftNode->pParent = pNode;
+		}
+		cNode = pLeftNode;
+	}
+	//case 4 양쪽다 nil노드가 아니라면
+	else
+	{
+		Node* temp = root->pLeft;//왼쪽으로 한칸이동후
+		while (temp->pRight != nil)
+		{
+			temp = temp->pRight;//가장 오른쪽 개체를 찾는다.
+		}
+		root->Data = temp->Data;
+		removeNodeColor = temp->pColor;
+		Node* tempParent = temp->pParent;
+		if (tempParent == root)//부모가 루트면
+		{
+			tempParent->pLeft = temp->pLeft;//그냥 왼쪽을 업데이트하고
+			temp->pLeft->pParent = tempParent;//왼쪽의 왼쪽자식을 나로 업데이트하고
+			cNode = tempParent->pLeft;//삭제할노드로 지정한다.
+		}
+		else//아니라면
+		{
+			tempParent->pRight = temp->pLeft;//자식의 오른쪽을 나로 업데이트하고
+			temp->pLeft->pParent = tempParent;
+			cNode = temp->pLeft;
+		}
+		root = temp;
+	}
+	//실제로 삭제할 노드의 색이 레드라면 아무 작업도 안해도됨
+	//레드노드는 삭제되도 아무 이상이 없는 노드니까
+	if (removeNodeColor == e_BLACK)//삭제할노드의 색이 블랙이면
+	{
+		ReBalanceTree(cNode);//리밸런스에들어가야한다.
+	}
+
+
+	pRoot->pColor = e_BLACK;//루트노드와
+	nil->pColor = e_BLACK;// 닐노드는 항생블랙이어야한다.
+	pRoot->pParent = nil;//루트의 부모는 닐이어야하고
+	nil->pLeft = nil;//모든 닐은 서로를 연결한다.
+	nil->pParent = nil;
+	nil->pRight = nil;
+	delete_Count++;//삭제카운트값을 넣고
+	delete root;//요청된 노드를 삭제한다.
+	return true;//삭제가 완료됬다면 
 }
 
+void CREDBLACKTREE::ReBalanceTree(Node* root)
+{
+	while (root != this->pRoot)
+	{
+		if (root->pColor == e_RED)
+		{
+			root->pColor = e_BLACK;
+			return;
+		}
+		Node* pParentNode = root->pParent;
+		Node* pSiblingNode = pParentNode->pLeft;
+		if (pSiblingNode == root)
+			pSiblingNode = pParentNode->pRight;
+		Node* pSiblingLeftNode = pSiblingNode->pLeft;
+		Node* pSiblingRightNode = pSiblingNode->pRight;
+
+		if (pSiblingNode == pParentNode->pRight)//삼촌노드가 부모의 오른쪽이라면
+		{
+			if (pSiblingNode->pColor == e_RED)
+			{
+				pSiblingNode->pColor = e_BLACK;
+				pParentNode->pColor = e_RED;
+				RotateLeft(pParentNode);
+				continue;
+			}
+			else if (pSiblingNode->pColor == e_BLACK && pSiblingLeftNode->pColor ==
+				e_BLACK && pSiblingRightNode->pColor == e_BLACK)
+			{
+				pSiblingNode->pColor = e_RED;
+				root = pParentNode;
+				continue;
+			}
+			else if (pSiblingNode->pColor == e_BLACK && pSiblingLeftNode->pColor ==
+				e_RED && pSiblingRightNode->pColor == e_BLACK)
+			{
+				pSiblingLeftNode->pColor = e_BLACK;
+				pSiblingNode->pColor = e_RED;
+				RotateRight(pSiblingNode);
+				pSiblingNode = pParentNode->pRight;
+				pSiblingLeftNode = pSiblingNode->pLeft;
+				pSiblingRightNode = pSiblingNode->pRight;
+			}
+			pSiblingNode->pColor = pParentNode->pColor;
+			pParentNode->pColor = e_BLACK;
+			pSiblingRightNode->pColor = e_BLACK;
+			RotateLeft(pParentNode);
+			break;
+		}
+		else
+		{
+			if (pSiblingNode->pColor == e_RED)
+			{
+				pSiblingNode->pColor = e_BLACK;
+				pParentNode->pColor = e_RED;
+				RotateRight(pParentNode);
+				continue;
+			}
+			else if (pSiblingNode->pColor == e_BLACK && pSiblingRightNode->pColor ==
+				e_BLACK && pSiblingLeftNode->pColor == e_BLACK)
+			{
+				pSiblingNode->pColor = e_RED;
+				root = pParentNode;
+				continue;
+			}
+			else if (pSiblingNode->pColor == e_BLACK && pSiblingRightNode->pColor ==
+				e_RED && pSiblingLeftNode->pColor == e_BLACK)
+			{
+				pSiblingRightNode->pColor = e_BLACK;
+				pSiblingNode->pColor = e_RED;
+				RotateLeft(pSiblingNode);
+				pSiblingNode = pParentNode->pLeft;
+				pSiblingLeftNode = pSiblingNode->pLeft;
+				pSiblingRightNode = pSiblingNode->pRight;
+			}
+			pSiblingNode->pColor = pParentNode->pColor;
+			pParentNode->pColor = e_BLACK;
+			pSiblingLeftNode->pColor = e_BLACK;
+			RotateRight(pParentNode);
+			break;
+		}
+	}
+}
+
+void CREDBLACKTREE::RotateRight(Node* root)
+{
+	Node* pParentNode = root->pParent;
+	Node* pLeftNode = root->pLeft;
+	Node* pRightNode = root->pRight;
+	Node* pGrandChildNode = root->pLeft->pRight;
+
+	if (pParentNode->pRight == root)
+	{
+		pParentNode->pRight = pLeftNode;
+		pLeftNode->pParent = pParentNode;
+		pGrandChildNode->pParent = root;
+		root->pLeft = pGrandChildNode;
+		pLeftNode->pRight = root;
+		root->pParent = pLeftNode;
+		if (this->pRoot == root)
+			this->pRoot = pRightNode;
+	}
+	else
+	{
+		pParentNode->pLeft = pLeftNode;
+		pLeftNode->pParent = pParentNode;
+		root->pLeft = pGrandChildNode;
+		pGrandChildNode->pParent = root;
+		root->pParent = pLeftNode;
+		pLeftNode->pRight = root;
+
+		if (this->pRoot == root)
+			this->pRoot = pLeftNode;
+	}
+}
+
+void CREDBLACKTREE::RotateLeft(Node* root)
+{
+	Node* pParentNode = root->pParent;
+	Node* pRightNode = root->pRight;
+	Node* pLeftNode = root->pLeft;
+	Node* pGrandChildNode = root->pRight->pLeft;
+	if (pParentNode->pRight == root)
+	{
+		pParentNode->pRight = pRightNode;
+		pRightNode->pParent = pParentNode;
+		root->pParent = pRightNode;
+		pRightNode->pLeft = root;
+		root->pRight = pGrandChildNode;
+		pGrandChildNode->pParent = root;
+
+		if (this->pRoot == root)
+			this->pRoot = pLeftNode;
+	}
+	else
+	{
+		pParentNode->pLeft = pRightNode;
+		pRightNode->pParent = pParentNode;
+		root->pParent = pRightNode;
+		pRightNode->pLeft = root;
+		root->pRight = pGrandChildNode;
+		pGrandChildNode->pParent = root;
+
+		if (this->pRoot == root)
+			this->pRoot = pRightNode;
+	}
+}

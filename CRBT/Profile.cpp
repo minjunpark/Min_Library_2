@@ -28,7 +28,7 @@ LARGE_INTEGER _P_End;//끝난시간
 LARGE_INTEGER _P_Freq;//기준시간
 LONGLONG _P_RealTime;//경과시간
 FILE* _P_FILE;
-errno_t _P_error;
+
 
 void ProfileBegin(const WCHAR* szName)
 {
@@ -96,8 +96,9 @@ void ProfileDataOutText(const WCHAR* szFileName)
 	time_t curTime = time(NULL);
 	struct tm tmCurTime;
 
-	_P_error = localtime_s(&tmCurTime, &curTime);
-	if (_P_error != 0)
+	errno_t _P_time_error;
+	_P_time_error = localtime_s(&tmCurTime, &curTime);
+	if (_P_time_error != 0)
 	{
 		printf("현재시간을 얻을수없다\n");
 		return;
@@ -109,8 +110,9 @@ void ProfileDataOutText(const WCHAR* szFileName)
 	wcsftime(_P_TIME_FORMAT, sizeof(_P_FILENAME), L"_%Y%m%d_%I%M%S.txt", &tmCurTime);//타임 포맷 세팅
 	wcscat_s(_P_FILENAME, _P_TIME_FORMAT);//타임 포맷 붙이기
 
-	_P_error = _wfopen_s(&_P_FILE, _P_FILENAME, L"wb");
-	if (_P_error != 0)
+	errno_t _P_file_error;
+	_P_file_error = _wfopen_s(&_P_FILE, _P_FILENAME, L"wb");
+	if (_P_file_error != 0)
 	{
 		printf("파일을 생성 할 수 없습니다.\n");
 		return;

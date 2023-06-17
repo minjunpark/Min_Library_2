@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CRingBuffer.cpp">
+    <ClCompile Include="Logger.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="CLOG.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CRingBuffer.h">
+    <ClInclude Include="CLOG.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

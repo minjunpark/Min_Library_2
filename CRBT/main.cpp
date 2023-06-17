@@ -74,11 +74,6 @@ int main()
 	//tree.RedBlack_Delete(37);
 	//tree.RedBlack_Delete(35);
 
-	tree.Delete(15);
-	tree.Delete(33);
-	tree.Delete(37);
-	tree.Delete(35);
-
 	//tree.RedBlack_Insert(30);
 	//tree.RedBlack_Insert(35);
 	//tree.RedBlack_Insert(20);
@@ -210,7 +205,7 @@ int main()
 			scanf_s("%d", &tmpinput);
 			printf("\n");
 			//tree.RedBlack_Delete(tmpinput);
-			tree.Delete(tmpinput);
+			tree.Remove(tree.GetRootNode(),tmpinput);
 			break;
 		case 3://출력
 			//tree.LevelPrint(tree.GetRootNode());
@@ -352,7 +347,7 @@ void RBT_DELETE_CHECK(int count, bool RBT_CHECK)
 			maps2->erase(num);
 			//maps2->remove(num);
 			//maps2->insert({ num,num });
-			tree2->Delete(num);
+			tree2->Remove(tree2->GetRootNode(),num);
 		}
 
 		tree2->All_Q(tree2->GetRootNode(), q);
@@ -475,3 +470,4 @@ void Struct_Time_Check_RANDOM(int count, int start, int end,int max_seed) //실�
 	//같은 데이터를 넣고 검색하고 삭제 하는 시간을 측정
 
 }
+

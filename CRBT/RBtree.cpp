@@ -30,7 +30,6 @@
 		return Remove(root, data);
 	}
 
-
 	void RedBlackTree::Release()
 	{
 		Release(root);

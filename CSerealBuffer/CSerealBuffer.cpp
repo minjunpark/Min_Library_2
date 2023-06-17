@@ -1,31 +1,35 @@
 #include "CSerealBuffer.h"
 
-CSerealBuffer::CSerealBuffer()
+
+
+CSerealBuffer::CSerealBuffer() :_UseSize(0), _BufferSize(eBUFFER_DEFAULT), _Front(0), _Rear(0)
 {
-	_Start = nullptr;
-	if (nullptr != _Start)
-		delete[] _Start;
 	_UseSize = 0;
 	_BufferSize = eBUFFER_DEFAULT;
 	_Front = 0;
 	_Rear = 0;
 	_Start = new char[_BufferSize];
-}
-CSerealBuffer::CSerealBuffer(int iBufferSize)
-{
-	_Start = nullptr;
-	if (nullptr != _Start)
-		delete[] _Start;
 
+	//_Start = nullptr;
+	//if (nullptr != _Start)
+	//	delete[] _Start;
+
+}
+
+CSerealBuffer::CSerealBuffer(int iBufferSize) :_UseSize(0), _BufferSize(iBufferSize), _Front(0), _Rear(0)
+{
 	if (iBufferSize <= 0)
-	{
 		return;
-	}
+
 	_UseSize = 0;
 	_BufferSize = iBufferSize;
 	_Front = 0;
 	_Rear = 0;
 	_Start = new char[_BufferSize];
+
+	//_Start = nullptr;
+	//if (nullptr != _Start)
+	//	delete[] _Start;
 }
 
 CSerealBuffer::~CSerealBuffer()
@@ -43,28 +47,31 @@ void CSerealBuffer::Clear(void)
 	_UseSize = 0;
 }
 
-int	CSerealBuffer::MoveRear(int iSize)
+int	CSerealBuffer::MoveWritePos(int iSize)
 {
 	if (iSize <= 0)//음수리턴
 		return 0;
 
 	if (_Rear + iSize > _BufferSize)//이동시키려는 공간위치가 버퍼사이즈보다 크다면?
 		return 0;
-	
-	_Rear = _Rear + iSize;
+
+	_Rear += iSize;//크기만큼 이동시킨다.
+	_UseSize += iSize;//쓴만큼 더한다.
+
 	return iSize;//이동한 _Rear포인터 위치를 리턴한다.
 }
 
-int	CSerealBuffer::MoveFront(int iSize)
+int	CSerealBuffer::MoveReadPos(int iSize)
 {
 	if (iSize <= 0)//음수리턴
 		return 0;
 
-	//if (_Rear - _Front < iSize)
 	if (_UseSize < iSize)
 		return 0;
 
-	_Front = _Front + iSize;
+	_Front += iSize;//크기만큼 이동시킨다.
+	_UseSize -= iSize;//읽은 만큼 뺀다
+
 	return iSize;
 }
 
@@ -95,7 +102,7 @@ int	CSerealBuffer::PutData(char* chpSrc, int iSize)
 	if (iSize <= 0)//음수리턴
 		return 0;
 
-	memcpy(_Start - _Rear, chpSrc, iSize);//버퍼에 자리가 남아 있으므로 남은 공간에 데이터를 넣는다.
+	memcpy(_Start + _Rear, chpSrc, iSize);//버퍼에 자리가 남아 있으므로 남은 공간에 데이터를 넣는다.
 	_Rear += iSize;//쓰기버퍼를 쓴만큼 이동시키고
 	_UseSize += iSize;//사용사이즈도 증가시켜준다.
 
