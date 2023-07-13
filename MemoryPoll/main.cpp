@@ -89,7 +89,7 @@ int main()
 	//Pool(300, false);
 	
 	st_test* p = Pool.Alloc();//วาด็
-	st_test* k = Pool.Alloc();
+	st_test* k = Pool.Alloc();	
 	//st_Player* v = Pool2.Alloc();
 	//Pool.Free(k);
 	//Pool.Free(v);

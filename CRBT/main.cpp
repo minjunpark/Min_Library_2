@@ -28,7 +28,7 @@ int main()
 {
 	timeBeginPeriod(1);
 	QueryPerformanceFrequency(&_P_Freq);//최초 시간대 한번 세팅
-	Struct_Time_Check_RANDOM(50000,1,50000,2000);
+	Struct_Time_Check_RANDOM(1000,1,1000,100);
 	return 0;
 	//srand((unsigned int)time(NULL));
 	
@@ -403,14 +403,14 @@ void Struct_Time_Check_RANDOM(int count, int start, int end,int max_seed) //실�
 		{
 			int num = RANDOM(start, end);
 			//레드블랙트리 삽입측정
-			//PRO_BEGIN(L"RedBlack_Insert");
+			PRO_BEGIN(L"RedBlack_Insert");
 			CRBT->RedBlack_Insert(num);
-			//PRO_END(L"RedBlack_Insert");
+			PRO_END(L"RedBlack_Insert");
 			
 			//이진트리 입력 측정
-			//PRO_BEGIN(L"Tree_Insert");
+			PRO_BEGIN(L"Tree_Insert");
 			//CBST->Tree_Insert(num);
-			//PRO_END(L"Tree_Insert");
+			PRO_END(L"Tree_Insert");
 		}
 		
 		

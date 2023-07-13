@@ -23,6 +23,7 @@ public:
 	~CLOG();
 	void LOG_SET_LEVEL(en_LOG_LEVEL level);
 	void LOG_SET_DIRECTORY(const WCHAR* directory);
+	void LOG_WPRINT(const WCHAR* szType, en_LOG_LEVEL LogLevel, const WCHAR* szStringFormat);
 	void LOG(const WCHAR* szType, en_LOG_LEVEL LogLevel, const WCHAR* szStringFormat);
 	void LOG_HEX(const WCHAR* szType, en_LOG_LEVEL LogLevel, BYTE* pByte, int iByteLen, const WCHAR* szLog);
 	static CLOG* GetInstance() 

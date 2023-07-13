@@ -27,13 +27,25 @@ void CLOG::LOG_SET_DIRECTORY(const WCHAR* directory)
 	_wmkdir(_Directory);
 };
 
+void CLOG::LOG_WPRINT(const WCHAR* szType, en_LOG_LEVEL LogLevel, const WCHAR* szStringFormat)
+{
+	if (LogLevel < _LogLevel) 
+		return;
+
+	time_t cur_t = time(NULL);
+	tm tmCurTime;
+	localtime_s(&tmCurTime, &cur_t);
+	
+	//wprintf(L"");
+
+};
 
 void CLOG::LOG(const WCHAR* szType, en_LOG_LEVEL LogLevel, const WCHAR* szStringFormat)
 {
 	//현재 레벨보다 낮은 로그가 들어오면 무시
 	if (LogLevel < _LogLevel) return;
 	
-	time_t cur_t=time(NULL);
+	time_t cur_t = time(NULL);
 	tm tmCurTime;
 	
 	//시간설정

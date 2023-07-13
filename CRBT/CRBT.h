@@ -63,9 +63,15 @@ public:
 	//삽입
 	void RedBlack_Insert(int data);//RBT Insert
 	void RedBlack_Insert_Refresh(Node* pNode);//insert후 밸런스작업
-	//삭제
+	//삭제(구버전)
 	bool RedBlack_Delete(int data);
 	void RedBlack_Delete_Refresh(Node* _DNode);
+
+	//신버전
+	bool Remove(Node* root, int key);
+	void ReBalanceTree(Node* root);
+	void RotateRight(Node* root);
+	void RotateLeft(Node* root);
 
 	bool RedBlack_Search(int data);
 	Node* RedBlack_Search_Node(int data);
@@ -102,9 +108,5 @@ public:
 	//트리의 모든 데이터를 중위순회하면서 q에 넣는다.
 	void All_Q(Node* pNode, queue<int>* q);
 
-	//딜리트용
-	bool Remove(Node* root, int key);
-	void ReBalanceTree(Node* root);
-	void RotateRight(Node* root);
-	void RotateLeft(Node* root);
+
 };

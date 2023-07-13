@@ -1286,7 +1286,7 @@ bool CREDBLACKTREE::Remove(Node* root, int key)
 		}
 	}
 
-	//닐노드면 못찾은거임
+	//닐노드면 못찾은거임 삭제안할거
 	if (root == nil)
 		return false;
 
@@ -1301,7 +1301,7 @@ bool CREDBLACKTREE::Remove(Node* root, int key)
 		pSibling = pNode->pRight;//오른쪼으로 세팅한다
 	}
 
-	char removeNodeColor = root->pColor;//지금 삭제하려는 노드의 색깔은?
+	char removeNodeColor = root->pColor;//지금 삭제하려는 노드의 색깔을 저장
 
 	Node* cNode;//임시노드
 
@@ -1405,8 +1405,7 @@ bool CREDBLACKTREE::Remove(Node* root, int key)
 	{
 		ReBalanceTree(cNode);//리밸런스에들어가야한다.
 	}
-
-
+	
 	pRoot->pColor = e_BLACK;//루트노드와
 	nil->pColor = e_BLACK;// 닐노드는 항생블랙이어야한다.
 	pRoot->pParent = nil;//루트의 부모는 닐이어야하고
@@ -1414,6 +1413,7 @@ bool CREDBLACKTREE::Remove(Node* root, int key)
 	nil->pParent = nil;
 	nil->pRight = nil;
 	delete_Count++;//삭제카운트값을 넣고
+
 	delete root;//요청된 노드를 삭제한다.
 	return true;//삭제가 완료됬다면 
 }
