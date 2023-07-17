@@ -10,6 +10,9 @@
 #include <windows.h>
 #include <time.h>
 #include <string.h>
+#include <stdlib.h>
+#include <Windows.h>
+#include <process.h>
 
 char buf[121];
 char peek_buf[121];
@@ -26,8 +29,89 @@ char* buf_printf;
 char data[] = { "1abcdefgh 2abcdefgh 3abcdefgh 4abcdefgh 5abcdefgh 6abcdefgh 7abcdefgh 8abcdefgh 9abcdefgh 0abcdefgh 1abcdefgh 2abcdefgh0" };
 
 
-
+TRingBuffer Threadbuffer;
 //MRingBuffer* buffer = new MRingBuffer;
+
+unsigned WINAPI ThreadFunction(void* arg)
+{
+	srand(100);
+	int enqRandom;
+	int deqRandom;
+
+	char* ptr = data;
+	char* deqCopy = (char*)malloc(sizeof(data));
+	char* dataCopy = (char*)malloc(sizeof(data));
+	char* deqPeek = (char*)malloc(sizeof(data));
+	char* Start = dataCopy;
+	int leftSize = sizeof(data) - 1;
+
+	for (;;)
+	{
+		if (leftSize == 0)
+		{
+			dataCopy = Start;
+			ZeroMemory(dataCopy, sizeof(data));
+			ptr = data;
+			leftSize = sizeof(data) - 1;
+		}
+
+		enqRandom = rand() % leftSize + 1;
+		int enqRet = Threadbuffer.Enqueue(ptr, enqRandom); //랜덤한 길이만큼 넣기 
+		ptr = ptr + enqRet; //enq된 사이즈만큼 증가.
+
+		leftSize = leftSize - enqRet;
+	}
+	return 0;
+}
+
+unsigned WINAPI ThreadFunction2(void* arg)
+{
+	srand(150);
+	
+	int deqRandom;
+
+	char* ptr = data;
+	char* deqCopy = (char*)malloc(sizeof(data));
+	char* dataCopy = (char*)malloc(sizeof(data));
+	char* deqPeek = (char*)malloc(sizeof(data));
+	char* Start = dataCopy;
+	int leftSize = sizeof(data) - 1;
+
+	for (;;)
+	{
+		deqRandom = rand() % 120 + 1;
+
+		ZeroMemory(deqCopy, sizeof(data));
+		//ZeroMemory(deqPeek, sizeof(data));
+		//int peekRet = Threadbuffer.Peek(deqPeek, deqRandom);
+
+		int deqRet = Threadbuffer.Dequeue(deqCopy, deqRandom);
+
+		//if (deqRet != 0) {
+		//	memcpy_s(dataCopy, deqRet, deqCopy, deqRet);
+		//	dataCopy = dataCopy + deqRet;
+		//}
+
+		//if (strcmp(deqCopy, deqPeek) != 0)
+		//{
+		//	//printf("count %s\n", count);
+		//	printf("deqPeek %s\n", deqPeek);
+		//	printf("deqCopy %s", deqCopy);
+		//	return 0;
+		//}
+
+		//if (count == 200)
+		//{
+		//	buffer->Resize(15000);
+		//}
+
+		if (deqRet > 0)
+		{
+			printf("%s", deqCopy);
+		}
+	}
+	return 0;
+}
 
 void main()
 {
@@ -52,13 +136,26 @@ void main()
 	char* Start = dataCopy;
 	int leftSize = sizeof(data) - 1;
 
+	HANDLE hThread1;
+	HANDLE hThread2;
+	
+	DWORD dwThreadID1;
+	DWORD dwThreadID2;
+	
+	hThread1 = (HANDLE)_beginthreadex(NULL, 0, ThreadFunction, NULL, 0, (unsigned*)&dwThreadID1);
+	hThread2 = (HANDLE)_beginthreadex(NULL, 0, ThreadFunction2, NULL, 0, (unsigned*)&dwThreadID2);
+	int a=0;
+	while (1)
+	{
+		a++;
+	}
 	
 	while (true)
 	{
 
 		if (leftSize == 0)
 		{
-			
+
 			//printf("%s\n", dataCopy);
 			//printf("%s", dataCopy);
 			////return;
@@ -73,7 +170,7 @@ void main()
 			ptr = data;
 			leftSize = sizeof(data) - 1;
 		}
-		
+
 		if (count == 3)
 		{
 			printf("");
@@ -82,23 +179,23 @@ void main()
 		enqRandom = rand() % leftSize + 1;
 		int enqRet = buffer->Enqueue(ptr, enqRandom); //랜덤한 길이만큼 넣기 
 		ptr = ptr + enqRet; //enq된 사이즈만큼 증가.
-		
+
 		deqRandom = rand() % leftSize + 1;
 
 		ZeroMemory(deqCopy, sizeof(data));
 		ZeroMemory(deqPeek, sizeof(data));
 		int peekRet = buffer->Peek(deqPeek, deqRandom);
-		
+
 		leftSize = leftSize - enqRet;
 
 		int deqRet = buffer->Dequeue(deqCopy, deqRandom);
 
-		if (deqRet!=0) {
+		if (deqRet != 0) {
 			memcpy_s(dataCopy, deqRet, deqCopy, deqRet);
 			dataCopy = dataCopy + deqRet;
 		}
 
-		if ( strcmp(deqCopy, deqPeek) != 0	)
+		if (strcmp(deqCopy, deqPeek) != 0)
 		{
 			printf("count %s\n", count);
 			printf("deqPeek %s\n", deqPeek);
@@ -106,41 +203,19 @@ void main()
 			return;
 		}
 
-		if (count == 200)
-		{
-			buffer->Resize(15000);
-		}
-
-		//if (count == 400)
-//			buffer->GetBufferSize();
+		//if (count == 200)
+		//{
+		//	buffer->Resize(15000);
+		//}
 
 		if (deqRet > 0)
 		{
 			printf("%s", deqCopy);
 		}
 
-		count++;
-
-		//if (strcmp()) 
-		//{
-		//	printf("count %lld", count)
-		//}
-
-		//buffer._print();
-		//return;
-		//Sleep(2);
-		//Sleep(0);
-
-
-
-		//if (count ==30)
-		//{
-		//	delete buffer;
-		//	break;
-		//}
-	}
-	printf("asdasdasd");
+		//count++;
 	//return;
+	}
 }
 
 //int main()
