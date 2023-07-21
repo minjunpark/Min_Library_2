@@ -3,6 +3,7 @@
 
 CRingBuffer::CRingBuffer()//디폴트 버퍼계산 10000바이트를 기본으로한다
 {
+	InitializeSRWLock(&_Lock);
 	_Start = nullptr;
 	if (nullptr != _Start)
 		delete[] _Start;
@@ -12,8 +13,10 @@ CRingBuffer::CRingBuffer()//디폴트 버퍼계산 10000바이트를 기본으�
 	_Start = new char[_BufferSize];
 }
 
+
 CRingBuffer::CRingBuffer(int iBufferSize)//들어온 크기만큼 버퍼를 생성 0이하면 생성을 애초에 안한다.
 {
+	InitializeSRWLock(&_Lock);
 	_Start = nullptr;
 	if (nullptr != _Start)
 		delete[] _Start;
@@ -362,4 +365,14 @@ char* CRingBuffer::GetFrontBufferPtr(void)
 char* CRingBuffer::GetRearBufferPtr(void)
 {
 	return _Start + _Rear;
+}
+
+void CRingBuffer::Lock(bool shared)
+{
+	return shared ? AcquireSRWLockShared(&_Lock) : AcquireSRWLockExclusive(&_Lock);
+}
+
+void CRingBuffer::Unlock(bool shared)
+{
+	return shared ? ReleaseSRWLockShared(&_Lock) : ReleaseSRWLockExclusive(&_Lock);
 }

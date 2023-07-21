@@ -1,12 +1,9 @@
 #pragma once
-
+#include <process.h>
+#include <Windows.h>
 class CRingBuffer
 {
-private:
-	char* _Start;//버퍼 시작지점
-	int _BufferSize;//총 버퍼 크기
-	int _Front;//읽기 포인터 계산을 위한값
-	int _Rear;//쓰기 포인터 계산을 위한값
+
 
 public:
 	CRingBuffer(void);//사이즈가 없을경우의 생성자
@@ -33,9 +30,17 @@ public:
 
 	void ClearBuffer(void);//버퍼를 초기화하기
 	bool Resize(int size);//버퍼의 사이즈를 바꾸는 함수(나중에 고려해볼예정)
+	void Lock(bool shared);
+	void Unlock(bool shared);
 
 private:
-	enum { VOID_VALUE = 8 };
+	char* _Start;//버퍼 시작지점
+	int _BufferSize;//총 버퍼 크기
+	int _Front;//읽기 포인터 계산을 위한값
+	int _Rear;//쓰기 포인터 계산을 위한값
+	SRWLOCK _Lock;
 
+	enum { VOID_VALUE = 8 };
+	
 
 };

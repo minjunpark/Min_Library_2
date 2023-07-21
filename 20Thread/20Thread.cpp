@@ -10,6 +10,7 @@ alignas(64)//인터록함수 쓰는거니까 변수 떨어뜨려두자
 int g_Connect = 0;//접속자 수
 alignas(64)
 bool g_Shutdown = false;//얘도 계속 참조하는 애니까 떨구는게 맞지 않을까?
+
 HANDLE g_Handle[5];
 //같은 시드면 똑같이 넣고 빼고를 반복해서 계속 0만나온다 
 //time null로 할때도 값을 바꿔가면서 해야될듯
@@ -91,7 +92,7 @@ unsigned __stdcall UpdateThread(void* param)
 int main()
 {
     int dwThreadID = 0;
-    int a[5] = { 0,1,2,3,4 };
+    int intion[5] = { 0,1,2,3,4 };
     //이벤트 핸들만들기
     g_Handle[0] = CreateEvent(nullptr, false, false, nullptr);
     g_Handle[1] = CreateEvent(nullptr, false, false, nullptr);
@@ -101,24 +102,23 @@ int main()
 
     HANDLE _CreateThread[5];
     //동시실행을 위해 SUSPEND값으로 정지시키고 스레드를 핸들배열에 넣는다.
-    _CreateThread[0] = (HANDLE)_beginthreadex(nullptr, 0, UpdateThread, &a[0], CREATE_SUSPENDED, nullptr);
-    _CreateThread[1] = (HANDLE)_beginthreadex(nullptr, 0, UpdateThread, &a[1], CREATE_SUSPENDED, nullptr);
-    _CreateThread[2] = (HANDLE)_beginthreadex(nullptr, 0, UpdateThread, &a[2], CREATE_SUSPENDED, nullptr);
-    _CreateThread[3] = (HANDLE)_beginthreadex(nullptr, 0, AcceptThread, &a[3], CREATE_SUSPENDED, nullptr);
-    _CreateThread[4] = (HANDLE)_beginthreadex(nullptr, 0, DisconnectThread, &a[4], CREATE_SUSPENDED, nullptr);
+    _CreateThread[0] = (HANDLE)_beginthreadex(nullptr, 0, UpdateThread, &intion[0], CREATE_SUSPENDED, nullptr);
+    _CreateThread[1] = (HANDLE)_beginthreadex(nullptr, 0, UpdateThread, &intion[1], CREATE_SUSPENDED, nullptr);
+    _CreateThread[2] = (HANDLE)_beginthreadex(nullptr, 0, UpdateThread, &intion[2], CREATE_SUSPENDED, nullptr);
+    _CreateThread[3] = (HANDLE)_beginthreadex(nullptr, 0, AcceptThread, &intion[3], CREATE_SUSPENDED, nullptr);
+    _CreateThread[4] = (HANDLE)_beginthreadex(nullptr, 0, DisconnectThread, &intion[4], CREATE_SUSPENDED, nullptr);
 
-    //WaitForMultipleObjects(5, g_Handle, true, INFINITE); SUSPEND하고 실행하면 안된다.
+    WaitForMultipleObjects(5, g_Handle, true, INFINITE);
     //setEvent가 호출되지 않아서 논시그널 상태이기 때문에 무한 대기가 발생한다.
 
     //스레드를 한번에 실행한다.
-    for (int i = 0; i < 5; i++)
-    {
-        ResumeThread(_CreateThread[i]);
-    }
-
+    //for (int i = 0; i < 5; i++)
+    //{
+    //    ResumeThread(_CreateThread[i]);
+    //}
 
     //WaitForMultipleObjects();
-    int retConncet = 0;
+    //int retConncet = 0;
     //20초동안 1초마다 정지하면서 현재 접속한 유저수를 출력
     for (int i = 0; i < 20; i++)
     {
@@ -128,7 +128,7 @@ int main()
         printf("g_Connect : %d\n", g_Connect);//1초마다 연결된 유저를 출력한다.
     }
     
-    g_Shutdown = true;//모든스레드를 정지시킬것이다. 얘는 굳이 동기화 안해도 될듯?
+    g_Shutdown = true;//모든스레드를 정지시킬것이다. 얘는 동기화할 가치가 없고
     
     printf("ThreadClose START \n");
     WaitForMultipleObjects(5, _CreateThread, true, INFINITE);//모든 스레드가 정지될때까지 무한대기하면서 확인
